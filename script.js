@@ -85,6 +85,7 @@ function renderPage() {
   const restoredTotal = state.restoredPieces.length;
   const puzzleTotal = pages.filter((item) => item.type === "puzzle").length;
 
+  document.body.dataset.pageType = page.type;
   pageCount.textContent = `${state.currentPageIndex + 1} / ${runtimePages.length} ページ`;
   restoreCount.textContent = `復元 ${restoredTotal} / ${puzzleTotal}`;
 
