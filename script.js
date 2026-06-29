@@ -106,7 +106,10 @@ const audioPaths = {
   correct: "assets/audio/correct.mp3",
   wrong: "assets/audio/wrong.mp3",
   ending: "assets/audio/ending_musicbox.mp3",
-  newOverture: "assets/audio/new_overture.mp3"
+  chapter1: "assets/audio/1%E7%AB%A0.mp3",
+  chapter2: "assets/audio/2%E7%AB%A0.mp3",
+  chapter3: "assets/audio/3%E7%AB%A0.mp3",
+  chapter4: "assets/audio/4%E7%AB%A0.mp3"
 };
 
 const imagePaths = {
@@ -1055,7 +1058,7 @@ function getEffectVolume(name) {
 }
 
 function getAmbientVolume(ambientKey) {
-  if (ambientKey === "newOverture") {
+  if (ambientKey.startsWith("chapter")) {
     return 0.34;
   }
 
@@ -1086,8 +1089,8 @@ function fadeAudioIn(audio, targetVolume, duration) {
 }
 
 function getAmbientAudioKey(page) {
-  if (page.type === "restore" && page.sourceId === 4) {
-    return "newOverture";
+  if (page.type === "restore" && page.sourceId >= 1 && page.sourceId <= 4) {
+    return `chapter${page.sourceId}`;
   }
 
   if (page.type === "ending") {
