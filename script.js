@@ -121,6 +121,7 @@ const audioState = {
 const state = loadProgress();
 state.currentPageIndex = 0;
 state.unlockedPageIndex = clampPageIndex(state.unlockedPageIndex);
+let pageTurnTimer;
 
 detectOptionalImages();
 
@@ -183,6 +184,10 @@ function renderPage() {
   book.classList.remove("is-turning");
   void book.offsetWidth;
   book.classList.add("is-turning");
+  window.clearTimeout(pageTurnTimer);
+  pageTurnTimer = window.setTimeout(() => {
+    book.classList.remove("is-turning");
+  }, 700);
 
   if (state.currentPageIndex > state.unlockedPageIndex) {
     book.innerHTML = renderSealedPage();
@@ -231,7 +236,7 @@ function renderCoverPage(page) {
           <div class="envelope-mark" aria-hidden="true"></div>
           <div class="seal" aria-hidden="true">封</div>
           <p class="eyebrow">Blessing Manor</p>
-          <h1>${escapeHtml(page.title)}</h1>
+          <h1 class="cover-title">${renderAnimatedTitle(page.title)}</h1>
           <p class="lead">${escapeHtml(page.text)}</p>
           <button class="primary-button" type="button" data-action="open-book">祝福の館へ入る</button>
         </div>
@@ -358,6 +363,13 @@ function renderInvitationPreview(isComplete = false) {
   }
 
   return `<div class="invitation-preview" aria-label="復元中のオルゴール">${pieces.join("")}</div>`;
+}
+
+function renderAnimatedTitle(title) {
+  return Array.from(title).map((character, index) => {
+    const displayCharacter = character === " " ? "&nbsp;" : escapeHtml(character);
+    return `<span style="--title-delay: ${index * 70}ms">${displayCharacter}</span>`;
+  }).join("");
 }
 
 function renderMusicboxGauge(restoredTotal, puzzleTotal) {
