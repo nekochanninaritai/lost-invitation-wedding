@@ -12,6 +12,8 @@ const pages = [
   {
     type: "story",
     title: "祝福の館からの手紙",
+    image: "assets/images/letter.png",
+    imageAlt: "祝福の館からの手紙",
     text: "**祝福の館へようこそ。**\n\nこの館では百年前から、\"祝福の演奏会\"が止まったままです。\n\nオルゴールを完成させる四つの旋律は館の各所へ散り、その音色を失いました。\n\nどうか蝶たちの導きに従い、失われた旋律を見つけてください。\n\n四つの旋律が揃う時、館には再び祝福の音楽が響き渡るでしょう。"
   },
   {
@@ -269,6 +271,9 @@ function renderCoverPage(page) {
 
 function renderStoryPage(page) {
   const previousButton = renderPreviousButton();
+  const storyContent = page.image
+    ? renderStoryImage(page)
+    : `<div class="story-body">${formatStoryText(page.text)}</div>`;
 
   return `
     <div class="book-spread story-spread">
@@ -276,13 +281,21 @@ function renderStoryPage(page) {
         ${renderPaperEffects()}
         <p class="eyebrow">Story</p>
         <h2>${escapeHtml(page.title)}</h2>
-        <div class="story-body">${formatStoryText(page.text)}</div>
+        ${storyContent}
         <div class="page-actions">
           ${previousButton}
           <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
         </div>
       </article>
     </div>
+  `;
+}
+
+function renderStoryImage(page) {
+  return `
+    <figure class="story-image-frame">
+      <img src="${escapeHtml(page.image)}" alt="${escapeHtml(page.imageAlt || page.title)}">
+    </figure>
   `;
 }
 

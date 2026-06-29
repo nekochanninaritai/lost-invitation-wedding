@@ -819,6 +819,29 @@ h3 {
   line-height: 2;
 }
 
+.story-image-frame {
+  display: grid;
+  width: min(100%, 560px);
+  margin: 24px auto 0;
+  padding: 10px;
+  place-items: center;
+  border: 1px solid rgba(185, 154, 99, 0.44);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 240, 0.78), rgba(232, 211, 178, 0.34));
+  box-shadow:
+    0 0 0 1px rgba(255, 250, 240, 0.56) inset,
+    0 16px 28px rgba(72, 49, 31, 0.12);
+}
+
+.story-image-frame img {
+  display: block;
+  width: 100%;
+  max-height: min(64dvh, 620px);
+  object-fit: contain;
+  border-radius: 6px;
+}
+
 .story-body p,
 .ending-text p,
 .explanation-text p {
@@ -1674,6 +1697,15 @@ body[data-page-type="ending"] .ending-text {
   .page {
     max-height: calc(100dvh - 116px);
     padding: 24px 18px;
+  }
+
+  .story-image-frame {
+    margin-top: 18px;
+    padding: 8px;
+  }
+
+  .story-image-frame img {
+    max-height: calc(100dvh - 260px);
   }
 
   .audio-start,
