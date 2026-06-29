@@ -104,7 +104,8 @@ const audioPaths = {
   click: "assets/audio/click.mp3",
   correct: "assets/audio/correct.mp3",
   wrong: "assets/audio/wrong.mp3",
-  ending: "assets/audio/ending_musicbox.mp3"
+  ending: "assets/audio/ending_musicbox.mp3",
+  newOverture: "assets/audio/new_overture.mp3"
 };
 
 const imagePaths = {
@@ -115,6 +116,8 @@ const audioState = {
   enabled: false,
   endingStarted: false,
   endingAudio: null,
+  ambientAudio: null,
+  ambientKey: "",
   introAudio: null,
   currentEffects: []
 };
@@ -219,6 +222,23 @@ function renderPage() {
   bindCommonActions();
   bindPuzzleForm(page);
   updateAmbientAudio(page);
+  schedulePageOverflowUpdate();
+}
+
+function schedulePageOverflowUpdate() {
+  requestAnimationFrame(updatePageOverflow);
+}
+
+function updatePageOverflow() {
+  document.querySelectorAll(".book-spread").forEach((spreadElement) => {
+    const hasOverflow = spreadElement.scrollHeight > spreadElement.clientHeight + 2;
+    spreadElement.classList.toggle("is-scrollable", hasOverflow);
+  });
+
+  document.querySelectorAll(".page").forEach((pageElement) => {
+    const hasOverflow = pageElement.scrollHeight > pageElement.clientHeight + 2;
+    pageElement.classList.toggle("is-scrollable", hasOverflow);
+  });
 }
 
 function detectOptionalImages() {
@@ -702,7 +722,7 @@ function playSound(name) {
 }
 
 function playIntroSound() {
-  if (!audioPaths.intro || isEndingPage()) {
+  if (!audioPaths.intro || getAmbientAudioKey(runtimePages[state.currentPageIndex])) {
     return;
   }
 
@@ -728,6 +748,13 @@ function pauseAllAudio(options = {}) {
     audioState.endingStarted = false;
   }
 
+  if (audioState.ambientAudio) {
+    audioState.ambientAudio.pause();
+    audioState.ambientAudio.currentTime = 0;
+    audioState.ambientAudio = null;
+    audioState.ambientKey = "";
+  }
+
   audioState.currentEffects.forEach((audio) => {
     audio.pause();
     audio.currentTime = 0;
@@ -748,31 +775,53 @@ function updateAmbientAudio(page) {
     return;
   }
 
-  if (page.type !== "ending") {
-    if (audioState.endingAudio) {
-      audioState.endingAudio.pause();
-      audioState.endingAudio.currentTime = 0;
-      audioState.endingStarted = false;
-    }
-    return;
-  }
-
   if (audioState.introAudio) {
     audioState.introAudio.pause();
     audioState.introAudio.currentTime = 0;
   }
 
-  if (!audioState.endingAudio) {
-    audioState.endingAudio = new Audio(audioPaths.ending);
-    audioState.endingAudio.loop = true;
-    audioState.endingAudio.volume = 0.32;
+  const ambientKey = getAmbientAudioKey(page);
+
+  if (!ambientKey) {
+    stopAmbientAudio();
+    return;
   }
 
-  if (!audioState.endingStarted) {
-    audioState.endingStarted = true;
-    audioState.endingAudio.play().catch(() => {});
+  if (audioState.ambientKey !== ambientKey) {
+    stopAmbientAudio();
+    audioState.ambientAudio = new Audio(audioPaths[ambientKey]);
+    audioState.ambientAudio.loop = true;
+    audioState.ambientAudio.volume = ambientKey === "newOverture" ? 0.38 : 0.32;
+    audioState.ambientKey = ambientKey;
   }
+
+  audioState.ambientAudio.play().catch(() => {});
+}
+
+function getAmbientAudioKey(page) {
+  if (page.type === "restore" && page.sourceId === 4) {
+    return "newOverture";
+  }
+
+  if (page.type === "ending") {
+    return "ending";
+  }
+
+  return "";
+}
+
+function stopAmbientAudio() {
+  if (audioState.ambientAudio) {
+    audioState.ambientAudio.pause();
+    audioState.ambientAudio.currentTime = 0;
+  }
+
+  audioState.ambientAudio = null;
+  audioState.ambientKey = "";
+  audioState.endingStarted = false;
 }
 
 setupAudioControls();
 renderPage();
+window.addEventListener("resize", schedulePageOverflowUpdate);
+window.addEventListener("orientationchange", schedulePageOverflowUpdate);
