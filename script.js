@@ -110,10 +110,17 @@ const pages = [
     imageAlt: "祝福の光に包まれたオルゴール",
     imageFirst: true,
     buttonText: "披露宴へ戻る",
+    extraButton: true,
     ambientAudioKey: "ending",
     variant: "epilogue epilogue-final",
     finalPage: true,
     preventSplit: true
+  },
+  {
+    type: "extra",
+    title: "Extra Contents",
+    subtitle: "祝福の館からの小さな贈り物",
+    ambientAudioKey: "ending"
   }
 ];
 
@@ -288,6 +295,10 @@ function renderPage() {
     book.innerHTML = renderEndingPage(page);
   }
 
+  if (page.type === "extra") {
+    book.innerHTML = renderExtraPage(page);
+  }
+
   bindCommonActions();
   bindPuzzleForm(page);
   updateAmbientAudio(page);
@@ -359,6 +370,7 @@ function renderStoryPage(page) {
   const nextButtonText = page.buttonText || "次のページへ";
   const buttonAction = page.finalPage ? "restart" : "next-page";
   const buttonClass = page.finalPage ? "secondary-button" : "primary-button";
+  const extraButton = page.extraButton ? renderExtraContentsButton() : "";
 
   return `
     <div class="book-spread story-spread ${themeClass}">
@@ -371,6 +383,7 @@ function renderStoryPage(page) {
         <div class="page-actions">
           ${previousButton}
           <button class="${buttonClass}" type="button" data-action="${buttonAction}">${escapeHtml(nextButtonText)}</button>
+          ${extraButton}
         </div>
       </article>
       <article class="page room-visual-page" aria-hidden="true">
@@ -379,6 +392,15 @@ function renderStoryPage(page) {
         ${renderRoomVisual(themeClass)}
       </article>
     </div>
+  `;
+}
+
+function renderExtraContentsButton() {
+  return `
+    <button class="extra-contents-button" type="button" data-action="next-page">
+      <span class="extra-contents-button__label">Extra Contents</span>
+      <span class="extra-contents-button__sub">祝福の館から、もうひとつの贈り物</span>
+    </button>
   `;
 }
 
@@ -489,6 +511,73 @@ function renderEndingPage(page) {
   `;
 }
 
+function renderExtraPage(page) {
+  const previousButton = renderPreviousButton();
+  const themeClass = getPageTheme(page);
+
+  return `
+    <div class="book-spread extra-spread ${themeClass}">
+      <article class="page extra-page room-page">
+        ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
+        <p class="eyebrow">Secret Room</p>
+        <h2>${escapeHtml(page.title)}</h2>
+        <p class="extra-subtitle">${escapeHtml(page.subtitle)}</p>
+        <div class="story-body extra-intro">
+          ${formatStoryText("白い蝶が最後に羽ばたくと、\n\n本棚の奥から小さな引き出しが静かに開きました。\n\nそこには、\nまだ誰にも見つかっていなかった小さな贈り物が残されています。\n\nここまで物語を見届けてくださったあなたへ。\n\n祝福の館から、心ばかりのお礼です。")}
+        </div>
+        ${renderEscapeGameCard()}
+        ${renderExtraVideo()}
+        <div class="story-body extra-closing">
+          ${formatStoryText("祝福の館は、\n\n今日という日だけ、\n\n静かにその扉を開きました。\n\n皆さまとともに紡いだこの物語は、\n\n私たちにとって一生忘れられない思い出です。\n\nまたどこかで、\n\n笑顔でお会いできる日を楽しみにしています。\n\n**本日は、本当にありがとうございました。**")}
+        </div>
+        <div class="page-actions">
+          ${previousButton}
+          <button class="secondary-button" type="button" data-action="restart">タイトルへ戻る</button>
+        </div>
+      </article>
+      <article class="page room-visual-page" aria-hidden="true">
+        ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
+        ${renderRoomVisual(themeClass)}
+      </article>
+    </div>
+  `;
+}
+
+function renderEscapeGameCard() {
+  const url = "https://dasshutsu.games/game/-NM2y3ZPZ1nQLpa620TF";
+
+  return `
+    <a class="extra-card" href="${url}" target="_blank" rel="noopener noreferrer">
+      <span class="extra-card__ribbon">Another Gift</span>
+      <span class="extra-card__thumb">
+        <img src="assets/images/dgm-thumbnail.webp" alt="もうひとつの祝福の館" loading="lazy" onerror="this.closest('.extra-card__thumb').classList.add('is-missing-image'); this.remove();">
+      </span>
+      <span class="extra-card__body">
+        <span class="extra-card__title">もうひとつの祝福の館</span>
+        <span class="extra-card__text">この物語を別の形でも楽しめる、<br>脱出ゲームメーカー版です。<br>スマートフォンから気軽に遊べます。</span>
+        <span class="extra-card__button">脱出ゲームメーカーで遊ぶ</span>
+      </span>
+    </a>
+  `;
+}
+
+function renderExtraVideo() {
+  return `
+    <section class="extra-video-section" aria-labelledby="extra-video-title">
+      <p class="eyebrow">Behind The Story</p>
+      <h3 id="extra-video-title">NGシーン</h3>
+      <p class="extra-video-subtitle">実はこんな舞台裏もありました。</p>
+      <p class="extra-video-text">少しだけ肩の力を抜いて、<br>最後まで楽しんでいただけたら嬉しいです。</p>
+      <video class="extra-video" controls preload="metadata" playsinline poster="assets/images/story-ending.png">
+        <source src="assets/videos/story_endding.mp4" type="video/mp4">
+        お使いのブラウザでは動画を再生できません。
+      </video>
+    </section>
+  `;
+}
+
 function renderSealedPage() {
   return `
     <div class="book-spread theme-prelude">
@@ -535,7 +624,7 @@ function getPageTheme(page) {
     return "theme-prelude";
   }
 
-  if (page.variant?.includes("epilogue")) {
+  if (page.type === "extra" || page.variant?.includes("epilogue")) {
     return "theme-finale";
   }
 
@@ -1153,7 +1242,7 @@ function getAmbientAudioKey(page) {
     return page.ambientAudioKey;
   }
 
-  if (page.type === "ending") {
+  if (page.type === "ending" || page.type === "extra") {
     return "ending";
   }
 
