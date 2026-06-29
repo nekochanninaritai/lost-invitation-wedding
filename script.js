@@ -205,10 +205,12 @@ function unlockPage(index) {
 
 function renderPage() {
   const page = runtimePages[state.currentPageIndex];
+  const themeClass = getPageTheme(page);
   const restoredTotal = state.restoredPieces.length;
   const puzzleTotal = pages.filter((item) => item.type === "puzzle").length;
 
   document.body.dataset.pageType = page.type;
+  document.body.dataset.roomTheme = themeClass.replace("theme-", "");
   pageCount.textContent = `${state.currentPageIndex + 1} / ${runtimePages.length} ページ`;
   restoreCount.textContent = `旋律 ${restoredTotal} / ${puzzleTotal}`;
   renderMusicboxGauge(restoredTotal, puzzleTotal);
@@ -279,9 +281,10 @@ function detectOptionalImages() {
 
 function renderCoverPage(page) {
   return `
-    <div class="book-spread">
-      <article class="page cover-page">
+    <div class="book-spread theme-prelude">
+      <article class="page cover-page room-page">
         ${renderPaperEffects()}
+        ${renderRoomDecor("theme-prelude")}
         <div class="cover-inner">
           <div class="envelope-mark" aria-hidden="true"></div>
           <div class="seal" aria-hidden="true">封</div>
@@ -298,14 +301,16 @@ function renderCoverPage(page) {
 
 function renderStoryPage(page) {
   const previousButton = renderPreviousButton();
+  const themeClass = getPageTheme(page);
   const storyContent = page.image
     ? renderStoryImage(page)
     : `<div class="story-body">${formatStoryText(page.text)}</div>`;
 
   return `
-    <div class="book-spread story-spread">
-      <article class="page story-page">
+    <div class="book-spread story-spread ${themeClass}">
+      <article class="page story-page room-page">
         ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
         <p class="eyebrow">Story</p>
         <h2>${escapeHtml(page.title)}</h2>
         ${storyContent}
@@ -313,6 +318,11 @@ function renderStoryPage(page) {
           ${previousButton}
           <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
         </div>
+      </article>
+      <article class="page room-visual-page" aria-hidden="true">
+        ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
+        ${renderRoomVisual(themeClass)}
       </article>
     </div>
   `;
@@ -328,18 +338,22 @@ function renderStoryImage(page) {
 
 function renderPuzzlePage(page) {
   const previousButton = renderPreviousButton();
+  const themeClass = getPageTheme(page);
 
   return `
-    <div class="book-spread">
-      <article class="page">
+    <div class="book-spread ${themeClass}">
+      <article class="page room-page">
         ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
         <p class="eyebrow">Story</p>
         <h2>${escapeHtml(page.leftTitle)}</h2>
         <p class="story-text">${escapeHtml(page.story)}</p>
         ${renderInvitationPreview()}
       </article>
-      <article class="page">
+      <article class="page question-page room-page">
         ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
+        ${renderRoomVisual(themeClass)}
         <p class="eyebrow">Question</p>
         <h3>${escapeHtml(page.puzzleTitle)}</h3>
         <p class="question-text">${escapeHtml(page.question)}</p>
@@ -357,11 +371,14 @@ function renderPuzzlePage(page) {
 
 function renderRestorePage(page) {
   const previousButton = renderPreviousButton();
+  const themeClass = getPageTheme(page);
 
   return `
-    <div class="book-spread">
-      <article class="page restore-card">
+    <div class="book-spread ${themeClass}">
+      <article class="page restore-card room-page">
         ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
+        ${renderRoomVisual(themeClass)}
         <div>
           <div class="paper-fragment">${escapeHtml(page.restoredText || "旋律の欠片")}</div>
           <p class="eyebrow">Restored</p>
@@ -379,17 +396,21 @@ function renderRestorePage(page) {
 
 function renderEndingPage(page) {
   const previousButton = renderPreviousButton();
+  const themeClass = getPageTheme(page);
 
   return `
-    <div class="book-spread">
-      <article class="page">
+    <div class="book-spread ${themeClass}">
+      <article class="page room-page">
         ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
+        ${renderRoomVisual(themeClass)}
         <p class="eyebrow">Completed Melody</p>
         <h2>${escapeHtml(page.title)}</h2>
         ${renderInvitationPreview(true)}
       </article>
-      <article class="page">
+      <article class="page room-page">
         ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
         <p class="eyebrow">Final Message</p>
         <div class="ending-text">${formatStoryText(page.text)}</div>
         <div class="page-actions">
@@ -403,9 +424,10 @@ function renderEndingPage(page) {
 
 function renderSealedPage() {
   return `
-    <div class="book-spread">
-      <article class="page sealed-card">
+    <div class="book-spread theme-prelude">
+      <article class="page sealed-card room-page">
         ${renderPaperEffects()}
+        ${renderRoomDecor("theme-prelude")}
         <div>
           <div class="sealed-lock" aria-hidden="true"></div>
           <p class="eyebrow">Sealed Page</p>
@@ -439,6 +461,58 @@ function renderAnimatedTitle(title) {
     const displayCharacter = character === " " ? "&nbsp;" : escapeHtml(character);
     return `<span style="--title-delay: ${index * 70}ms">${displayCharacter}</span>`;
   }).join("");
+}
+
+function getPageTheme(page) {
+  if (!page) {
+    return "theme-prelude";
+  }
+
+  if (page.id === 1 || page.sourceId === 1) {
+    return "theme-invitation";
+  }
+
+  if (page.id === 2 || page.sourceId === 2 || page.title?.includes("Cantabile") || page.leftTitle?.includes("Cantabile")) {
+    return "theme-time";
+  }
+
+  if (page.id === 3 || page.sourceId === 3 || page.title?.includes("Crescendo") || page.leftTitle?.includes("Crescendo")) {
+    return "theme-garden";
+  }
+
+  if (page.id === 4 || page.sourceId === 4 || page.title?.includes("Encore") || page.leftTitle?.includes("Encore") || page.type === "ending") {
+    return "theme-finale";
+  }
+
+  if (page.image) {
+    return "theme-invitation";
+  }
+
+  if (page.type === "cover" || page.title?.includes("Prelude") || page.leftTitle?.includes("Prelude")) {
+    return "theme-prelude";
+  }
+
+  return "theme-prelude";
+}
+
+function renderRoomDecor(themeClass) {
+  return `
+    <div class="room-decor ${themeClass}" aria-hidden="true">
+      <span class="room-mark mark-1"></span>
+      <span class="room-mark mark-2"></span>
+      <span class="room-mark mark-3"></span>
+    </div>
+  `;
+}
+
+function renderRoomVisual(themeClass) {
+  return `
+    <div class="room-visual ${themeClass}" aria-hidden="true">
+      <span class="visual-piece piece-1"></span>
+      <span class="visual-piece piece-2"></span>
+      <span class="visual-piece piece-3"></span>
+    </div>
+  `;
 }
 
 function renderPaperEffects() {
