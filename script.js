@@ -232,6 +232,7 @@ function renderCoverPage(page) {
   return `
     <div class="book-spread">
       <article class="page cover-page">
+        ${renderPaperEffects()}
         <div class="cover-inner">
           <div class="envelope-mark" aria-hidden="true"></div>
           <div class="seal" aria-hidden="true">封</div>
@@ -251,6 +252,7 @@ function renderStoryPage(page) {
   return `
     <div class="book-spread story-spread">
       <article class="page story-page">
+        ${renderPaperEffects()}
         <p class="eyebrow">Story</p>
         <h2>${escapeHtml(page.title)}</h2>
         <div class="story-body">${formatStoryText(page.text)}</div>
@@ -269,12 +271,14 @@ function renderPuzzlePage(page) {
   return `
     <div class="book-spread">
       <article class="page">
+        ${renderPaperEffects()}
         <p class="eyebrow">Story</p>
         <h2>${escapeHtml(page.leftTitle)}</h2>
         <p class="story-text">${escapeHtml(page.story)}</p>
         ${renderInvitationPreview()}
       </article>
       <article class="page">
+        ${renderPaperEffects()}
         <p class="eyebrow">Question</p>
         <h3>${escapeHtml(page.puzzleTitle)}</h3>
         <p class="question-text">${escapeHtml(page.question)}</p>
@@ -296,6 +300,7 @@ function renderRestorePage(page) {
   return `
     <div class="book-spread">
       <article class="page restore-card">
+        ${renderPaperEffects()}
         <div>
           <div class="paper-fragment">${escapeHtml(page.restoredText || "旋律の欠片")}</div>
           <p class="eyebrow">Restored</p>
@@ -317,11 +322,13 @@ function renderEndingPage(page) {
   return `
     <div class="book-spread">
       <article class="page">
+        ${renderPaperEffects()}
         <p class="eyebrow">Completed Melody</p>
         <h2>${escapeHtml(page.title)}</h2>
         ${renderInvitationPreview(true)}
       </article>
       <article class="page">
+        ${renderPaperEffects()}
         <p class="eyebrow">Final Message</p>
         <div class="ending-text">${formatStoryText(page.text)}</div>
         <div class="page-actions">
@@ -337,6 +344,7 @@ function renderSealedPage() {
   return `
     <div class="book-spread">
       <article class="page sealed-card">
+        ${renderPaperEffects()}
         <div>
           <div class="sealed-lock" aria-hidden="true"></div>
           <p class="eyebrow">Sealed Page</p>
@@ -370,6 +378,29 @@ function renderAnimatedTitle(title) {
     const displayCharacter = character === " " ? "&nbsp;" : escapeHtml(character);
     return `<span style="--title-delay: ${index * 70}ms">${displayCharacter}</span>`;
   }).join("");
+}
+
+function renderPaperEffects() {
+  return `
+    <div class="paper-effects" aria-hidden="true">
+      <span class="music-note note-1">♪</span>
+      <span class="music-note note-2">♫</span>
+      <span class="music-note note-3">♬</span>
+      <span class="butterfly butterfly-1"></span>
+      <span class="butterfly butterfly-2"></span>
+      <span class="sparkle sparkle-1"></span>
+      <span class="sparkle sparkle-2"></span>
+      <span class="sparkle sparkle-3"></span>
+      <span class="gold-dust dust-1"></span>
+      <span class="gold-dust dust-2"></span>
+      <span class="gold-dust dust-3"></span>
+      <span class="gold-dust dust-4"></span>
+      <span class="light-orb light-orb-1"></span>
+      <span class="musicbox-object musicbox-disc"></span>
+      <span class="musicbox-object musicbox-gear gear-1"></span>
+      <span class="light-ribbon"></span>
+    </div>
+  `;
 }
 
 function renderMusicboxGauge(restoredTotal, puzzleTotal) {

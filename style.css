@@ -43,45 +43,6 @@ body {
     linear-gradient(145deg, #eadcc5 0%, #f6ecd9 42%, #dfc8a4 100%);
 }
 
-body::before {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  content: "";
-  opacity: 0.2;
-  background-image:
-    radial-gradient(circle at 18% 20%, rgba(255, 247, 220, 0.42) 0 2px, transparent 3px),
-    linear-gradient(rgba(111, 60, 52, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(111, 60, 52, 0.06) 1px, transparent 1px);
-  background-size: 180px 180px, 30px 30px, 30px 30px;
-  animation: parchmentDrift 28s linear infinite;
-}
-
-body::after {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  content: "";
-  opacity: 0.42;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      transparent 0 18px,
-      var(--staff-line) 18px 19px,
-      transparent 19px 25px,
-      var(--staff-line) 25px 26px,
-      transparent 26px 32px,
-      var(--staff-line) 32px 33px,
-      transparent 33px 39px,
-      var(--staff-line) 39px 40px,
-      transparent 40px 46px,
-      var(--staff-line) 46px 47px,
-      transparent 47px 112px
-    );
-  mask-image: linear-gradient(180deg, transparent, #000 15%, #000 82%, transparent);
-  animation: staffParallax 36s linear infinite;
-}
-
 button,
 input {
   font: inherit;
@@ -91,35 +52,36 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-.decorative-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
+.paper-effects {
+  position: absolute;
+  inset: 10px;
+  z-index: 1;
   overflow: hidden;
+  border-radius: 8px;
   pointer-events: none;
 }
 
-.decorative-layer::before {
+.paper-effects::before {
   position: absolute;
-  inset: auto -10% 0;
-  height: 42vh;
+  inset: 0;
   content: "";
-  opacity: 0.32;
+  opacity: 0.18;
   background:
-    radial-gradient(ellipse at 50% 100%, rgba(41, 63, 49, 0.5), transparent 62%),
-    linear-gradient(180deg, transparent, rgba(41, 63, 49, 0.18));
+    radial-gradient(ellipse at 20% 18%, rgba(255, 248, 218, 0.62), transparent 9rem),
+    radial-gradient(ellipse at 86% 82%, rgba(228, 199, 114, 0.28), transparent 9rem),
+    linear-gradient(135deg, transparent, rgba(255, 246, 212, 0.24), transparent);
   filter: blur(1px);
 }
 
-.decorative-layer::after {
+.paper-effects::after {
   position: absolute;
-  inset: -20% -35%;
+  inset: -12%;
   content: "";
-  opacity: 0.2;
+  opacity: 0.14;
   background:
-    radial-gradient(circle at 24% 36%, rgba(255, 248, 218, 0.46), transparent 8rem),
-    radial-gradient(circle at 72% 18%, rgba(228, 199, 114, 0.24), transparent 11rem),
-    radial-gradient(circle at 68% 82%, rgba(207, 167, 160, 0.18), transparent 12rem);
+    radial-gradient(circle at 24% 36%, rgba(255, 248, 218, 0.5), transparent 6rem),
+    radial-gradient(circle at 72% 18%, rgba(228, 199, 114, 0.25), transparent 7rem),
+    radial-gradient(circle at 68% 82%, rgba(207, 167, 160, 0.14), transparent 8rem);
   filter: blur(2px);
   animation: ambientGlow 24s ease-in-out infinite;
 }
@@ -640,6 +602,7 @@ body.has-butterfly-image .butterfly::after {
   position: relative;
   min-height: 305px;
   padding: 30px 22px;
+  overflow: hidden;
   background:
     url("assets/images/parchment.png") center / cover no-repeat,
     url("assets/images/music_sheet.png") center / cover no-repeat,
@@ -648,6 +611,11 @@ body.has-butterfly-image .butterfly::after {
     linear-gradient(90deg, rgba(111, 60, 52, 0.08), transparent 18%, transparent 82%, rgba(111, 60, 52, 0.07)),
     linear-gradient(135deg, rgba(255, 250, 240, 0.94), rgba(241, 228, 206, 0.9)),
     var(--paper);
+}
+
+.page > :not(.paper-effects) {
+  position: relative;
+  z-index: 2;
 }
 
 .page + .page {
@@ -671,7 +639,7 @@ body.has-butterfly-image .butterfly::after {
   text-align: center;
 }
 
-body[data-page-type="cover"] .decorative-layer::before {
+body[data-page-type="cover"] .paper-effects::before {
   opacity: 0.48;
 }
 
