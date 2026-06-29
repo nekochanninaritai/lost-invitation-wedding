@@ -2,60 +2,90 @@ const pages = [
   {
     type: "cover",
     title: "蝶が運ぶ、最後の祝福",
-    text: "深い森の奥に、百年に一度だけ姿を現す祝福の館がありました。止まったままのオルゴールに四つの旋律を戻すため、白い蝶が二人を館へと導きます。"
+    text: "深い森の奥。"
+  },
+  {
+    type: "story",
+    title: "Prelude ― 前奏 ―",
+    text: "木々のざわめきさえ、どこか音楽のように聞こえる場所に、一軒の古い洋館が静かに佇んでいました。\n\nその館の名は――\n\n**祝福の館。**\n\n百年に一度だけ姿を現し、\"誰かを心から想う二人\"を迎え入れる、不思議な館です。\n\nけれど今、館は長い眠りについていました。\n\n大広間に置かれた大きなオルゴールは動きを止め、館を彩っていた蝶たちも静かに羽を休めています。\n\nそんなある日、一匹の白い蝶が、一人の若い女性の前へ舞い降りました。\n\n「……こっちへ来て、ってことかな。」\n\n女性が優しく微笑むと、少し離れた場所にいた若い男性が蝶へ視線を向けます。\n\n男性は多くを語ることはありません。\n\nけれど女性が歩き出すと、迷うことなくその隣へ並びました。\n\n蝶は嬉しそうに羽ばたき、森の奥へと二人を導いていきます。\n\nやがて木々が開け、その先には古い洋館が姿を現しました。\n\n重厚な扉は、まるで二人を待っていたかのように静かに開いていきます。\n\n館へ足を踏み入れると、小さな机の上に一通の手紙が置かれていました。"
+  },
+  {
+    type: "story",
+    title: "祝福の館からの手紙",
+    text: "**祝福の館へようこそ。**\n\nこの館では百年前から、\"祝福の演奏会\"が止まったままです。\n\nオルゴールを完成させる四つの旋律は館の各所へ散り、その音色を失いました。\n\nどうか蝶たちの導きに従い、失われた旋律を見つけてください。\n\n四つの旋律が揃う時、館には再び祝福の音楽が響き渡るでしょう。"
+  },
+  {
+    type: "story",
+    title: "Prelude ― 前奏 ―",
+    text: "女性は目を輝かせました。\n\n「なんだか素敵な物語が始まりそう。」\n\n男性は静かに頷きます。\n\nその瞳には、すでに冒険への好奇心が宿っていました。\n\nすると館のどこかで、かすかなオルゴールの音が一音だけ響きます。\n\n最初の旋律が、二人を待っていました。"
   },
   {
     type: "puzzle",
     id: 1,
-    leftTitle: "Prelude ― 前奏 ―",
-    story: "祝福の館へようこそ。この館では百年前から、祝福の演奏会が止まったままです。オルゴールを完成させる四つの旋律は館の各所へ散り、その音色を失いました。白い蝶に導かれ、二人は最初の旋律が眠る部屋へ足を踏み入れます。",
+    leftTitle: "≪謎解き①≫",
+    story: "最初の旋律が、二人を待っていました。",
     puzzleTitle: "謎解き①",
     question: "ふたりが大切にしている言葉です。『ありがとう』の気持ちを、今日という日に一番届けたい相手は誰でしょう？",
     answer: "みなさま",
-    explanation: "謎が解かれた瞬間、館の奥から澄んだ音色がひとつ響き渡ります。眠っていた蝶が羽を広げ、嬉しそうに奥の廊下へ飛んでいきました。最初の旋律が、オルゴールへ戻ったのです。",
+    explanation: "謎が解かれた瞬間。\n\n館の奥から澄んだ音色がひとつ響き渡ります。\n\n眠っていた蝶がゆっくりと羽を広げ、二人の周りを一周すると、どこか嬉しそうに奥の廊下へ飛んでいきました。\n\n最初の旋律が、オルゴールへ戻ったのです。",
     restoredPiece: 1,
     restoredText: "第一の旋律"
   },
   {
+    type: "story",
+    title: "Cantabile ― 歌うように ―",
+    text: "館の廊下には、長い年月を重ねた家具や時計、色とりどりのオルゴールが静かに並んでいました。\n\n女性は気になるものを見つけるたび、ふと足を止めます。\n\n古びた楽譜。\n\n壁に飾られた蝶の標本。\n\n小さな鍵穴。\n\nどれも今にも物語を語り出しそうでした。\n\n「この館には、まだたくさん秘密が隠れている気がする。」\n\n女性の言葉に、男性はそっと近づきます。\n\n女性が見つけた小さな違和感を、一つひとつ丁寧に確かめながら、静かに答えを探していきました。\n\n言葉は多くありません。\n\nけれど二人は自然と役割を分け合い、少しずつ館の秘密へ近づいていきます。\n\nその様子を見守るように、蝶たちが少しずつ数を増やしながら舞い始めました。\n\nやがて二人は、二つ目の部屋へたどり着きます。\n\nそこには、まだ奏でられていない旋律が静かに眠っていました。"
+  },
+  {
     type: "puzzle",
     id: 2,
-    leftTitle: "Cantabile ― 歌うように ―",
-    story: "館の廊下には、長い年月を重ねた家具や時計、色とりどりのオルゴールが静かに並んでいました。女性が小さな違和感に足を止めるたび、男性はそっと近づき、二人で答えを探していきます。見守るように蝶たちが数を増やし、二つ目の部屋へ導きました。",
+    leftTitle: "≪謎解き②≫",
+    story: "そこには、まだ奏でられていない旋律が静かに眠っていました。",
     puzzleTitle: "謎解き②",
     question: "テスト２",
     answer: "２",
-    explanation: "二つ目の旋律が戻ると、長い間止まっていた大時計の針が静かに一歩だけ進みました。窓から差し込む光は少し暖かくなり、館全体が柔らかな空気に包まれていきます。",
+    explanation: "二つ目の旋律が戻ると、長い間止まっていた大時計の針が静かに一歩だけ進みました。\n\n窓から差し込む光は少し暖かくなり、館全体が柔らかな空気に包まれていきます。\n\nけれど館の最も奥深くからは、どこか切ない風が流れてきました。",
     restoredPiece: 2,
     restoredText: "第二の旋律"
   },
   {
+    type: "story",
+    title: "Crescendo ― だんだん強く ―",
+    text: "蝶に導かれた先には、小さな温室がありました。\n\n色とりどりの花が咲き誇るその場所で、一匹だけ羽を閉じた金色の蝶が静かに佇んでいます。\n\nその蝶は、もう長い間飛んでいないようでした。\n\n二人が近づくと、蝶は静かに語り始めます。\n\n> 百年前、この館では幸せを願う演奏会が開かれました。\n>\n> けれど最後の旋律だけは誰にも奏でられることなく、演奏会は終わりを迎えてしまいました。\n>\n> それ以来、館も蝶たちも、ずっと待ち続けていたのです。\n>\n> 誰かを心から想い、その幸せを願える二人が訪れる日を。\n\n女性は蝶へ優しく微笑みます。\n\n男性も静かに頷きました。\n\nここまで歩いてきた理由が、少しだけ分かった気がしたのです。\n\n失われた三つ目の旋律が、柔らかな光を放ち始めました。"
+  },
+  {
     type: "puzzle",
     id: 3,
-    leftTitle: "Crescendo ― だんだん強く ―",
-    story: "蝶に導かれた先には、小さな温室がありました。色とりどりの花が咲き誇るその場所で、羽を閉じた金色の蝶が静かに佇んでいます。百年前から待ち続けていた想いを知った二人の前で、失われた三つ目の旋律が柔らかな光を放ち始めました。",
+    leftTitle: "≪謎解き③≫",
+    story: "失われた三つ目の旋律が、柔らかな光を放ち始めました。",
     puzzleTitle: "謎解き③",
     question: "テスト３",
     answer: "３",
-    explanation: "三つ目の旋律が戻ると、館中の蝶たちが一斉に舞い上がりました。止まっていたオルゴールは、短い旋律を奏で始めます。あと一つ。最後の旋律が戻れば、百年待ち続けた演奏会が始まります。",
+    explanation: "三つ目の旋律が戻ると、館中の蝶たちが一斉に舞い上がりました。\n\n止まっていたオルゴールは、短い旋律を奏で始めます。\n\nあと一つ。\n\n最後の旋律が戻れば、百年待ち続けた演奏会が始まります。",
     restoredPiece: 3,
     restoredText: "第三の旋律"
   },
   {
+    type: "story",
+    title: "Encore ― アンコール ―",
+    text: "蝶たちが二人を導いた先には、大きなオルゴールが置かれた大広間がありました。\n\n館中の蝶が、その場所へ集まっています。\n\nけれど、最後の旋律だけがまだ欠けたままでした。\n\n女性は優しく笑います。\n\n「ここまで来られたね。」\n\n男性も穏やかに微笑み返しました。\n\n「最後まで、一緒に。」\n\n二人は最後の旋律へ手を伸ばします。"
+  },
+  {
     type: "puzzle",
     id: 4,
-    leftTitle: "Encore ― アンコール ―",
-    story: "蝶たちが二人を導いた先には、大きなオルゴールが置かれた大広間がありました。館中の蝶がその場所へ集まっています。けれど、最後の旋律だけがまだ欠けたままでした。二人は穏やかに微笑み、最後の旋律へ手を伸ばします。",
+    leftTitle: "≪謎解き④≫",
+    story: "二人は最後の旋律へ手を伸ばします。",
     puzzleTitle: "謎解き④",
     question: "テスト４",
     answer: "４",
-    explanation: "最後の旋律が戻った瞬間、館いっぱいに美しい音楽が響き渡りました。百年眠り続けていたオルゴールは、待ち続けた想いを解き放つように、優しく、温かく歌い始めます。",
+    explanation: "その瞬間。\n\n館いっぱいに、美しい音楽が響き渡りました。\n\n百年眠り続けていたオルゴールは、まるで待ち続けた想いを解き放つように、優しく、温かく歌い始めます。\n\n蝶たちは一斉に空へ舞い上がり、金色の光が館中を包み込みました。\n\n羽を閉じていた金色の蝶も、ゆっくりと大空へ羽ばたきます。\n\n> おめでとうございます。\n>\n> あなたのおかげで、\n> 百年眠っていた祝福の演奏会は、\n> 再び始まりました。\n\n蝶たちは館を飛び立ちます。\n\n森を越え、\n\n空を越え、\n\n新しい物語が始まる場所へ。",
     restoredPiece: 4,
     restoredText: "最後の旋律"
   },
   {
     type: "ending",
     title: "祝福の演奏会",
-    text: "おめでとうございます。\n\nあなたのおかげで、\n百年眠っていた祝福の演奏会は、\n再び始まりました。\n\n蝶たちは館を飛び立ちます。\n森を越え、空を越え、\n新しい物語が始まる場所へ。\n\nこの館の物語は、ここで終わるものではありません。\n最後のページを閉じたその瞬間から、\nその続きを歩むのは――\nあなたです。\n\n今日、新たな人生という物語を歩み始める二人へ。\nどうか皆様の祝福を、あたたかな拍手に乗せて届けてください。\n\n幸せを運ぶ蝶たちは、\nその想いをきっと未来へ運んでくれるでしょう。"
+    text: "この館の物語は、ここで終わるものではありません。\n\n最後のページを閉じたその瞬間から、\n\nその続きを歩むのは――\n\n**あなたです。**\n\n今日、新たな人生という物語を歩み始める二人へ。\n\nどうか皆様の祝福を、あたたかな拍手に乗せて届けてください。\n\n幸せを運ぶ蝶たちは、その想いをきっと未来へ運んでくれるでしょう。"
   }
 ];
 
@@ -139,6 +169,10 @@ function renderPage() {
     book.innerHTML = renderCoverPage(page);
   }
 
+  if (page.type === "story") {
+    book.innerHTML = renderStoryPage(page);
+  }
+
   if (page.type === "puzzle") {
     book.innerHTML = renderPuzzlePage(page);
   }
@@ -167,6 +201,19 @@ function renderCoverPage(page) {
           <p class="lead">${escapeHtml(page.text)}</p>
           <button class="primary-button" type="button" data-action="open-book">祝福の館へ入る</button>
         </div>
+      </article>
+    </div>
+  `;
+}
+
+function renderStoryPage(page) {
+  return `
+    <div class="book-spread story-spread">
+      <article class="page story-page">
+        <p class="eyebrow">Story</p>
+        <h2>${escapeHtml(page.title)}</h2>
+        <div class="story-body">${formatStoryText(page.text)}</div>
+        <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
       </article>
     </div>
   `;
@@ -204,7 +251,7 @@ function renderRestorePage(page) {
           <div class="paper-fragment">${escapeHtml(page.restoredText || "旋律の欠片")}</div>
           <p class="eyebrow">Restored</p>
           <h2>旋律が戻りました</h2>
-          <p class="explanation-text">${escapeHtml(page.explanation)}</p>
+          <div class="explanation-text">${formatStoryText(page.explanation)}</div>
           <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
         </div>
       </article>
@@ -222,7 +269,7 @@ function renderEndingPage(page) {
       </article>
       <article class="page">
         <p class="eyebrow">Final Message</p>
-        <p class="ending-text">${escapeHtml(page.text)}</p>
+        <div class="ending-text">${formatStoryText(page.text)}</div>
         <button class="secondary-button" type="button" data-action="restart">もう一度、館を訪れる</button>
       </article>
     </div>
@@ -385,6 +432,35 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function formatStoryText(value) {
+  return String(value)
+    .split(/\n{2,}/)
+    .map((block) => {
+      const trimmed = block.trim();
+
+      if (!trimmed) {
+        return "";
+      }
+
+      if (trimmed.startsWith(">")) {
+        const quote = trimmed
+          .split("\n")
+          .map((line) => line.replace(/^>\s?/, ""))
+          .map(formatInlineText)
+          .join("<br>");
+
+        return `<blockquote>${quote}</blockquote>`;
+      }
+
+      return `<p>${formatInlineText(trimmed).replace(/\n/g, "<br>")}</p>`;
+    })
+    .join("");
+}
+
+function formatInlineText(value) {
+  return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 }
 
 renderPage();

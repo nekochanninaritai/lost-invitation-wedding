@@ -408,9 +408,49 @@ h3 {
   margin: 20px 0 0;
 }
 
+.story-spread {
+  grid-template-columns: 1fr;
+}
+
+.story-page {
+  min-height: 610px;
+}
+
+.story-body {
+  position: relative;
+  z-index: 1;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 2;
+}
+
+.story-body p,
+.ending-text p,
+.explanation-text p {
+  margin: 0 0 1.05em;
+}
+
+.story-body strong,
+.ending-text strong,
+.explanation-text strong {
+  color: var(--ink);
+  font-family: "Noto Serif JP", "Yu Mincho", serif;
+  font-weight: 700;
+}
+
+.story-body blockquote,
+.ending-text blockquote,
+.explanation-text blockquote {
+  margin: 1.25em 0;
+  padding: 1em 1.1em;
+  color: #5e4a3d;
+  border-left: 3px solid rgba(185, 154, 99, 0.72);
+  background: rgba(255, 250, 240, 0.58);
+}
+
 .ending-text {
   margin: 22px 0 0;
-  white-space: pre-line;
 }
 
 .seal {
@@ -700,6 +740,10 @@ body[data-page-type="ending"] .ending-text {
     grid-template-columns: 1fr 1fr;
   }
 
+  .story-spread {
+    grid-template-columns: 1fr;
+  }
+
   .book-spread::after {
     position: absolute;
     top: 0;
@@ -719,6 +763,10 @@ body[data-page-type="ending"] .ending-text {
   .page {
     min-height: 610px;
     padding: 42px 38px;
+  }
+
+  .story-page {
+    padding-inline: clamp(38px, 7vw, 92px);
   }
 
   .page + .page {
