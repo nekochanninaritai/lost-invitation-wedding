@@ -7,14 +7,13 @@ const pages = [
   {
     type: "story",
     title: "Prelude ― 前奏 ―",
-    text: "深い森の奥。\n\n小道を進むと、古い洋館が姿を現しました。\n\nその館の名は――\n祝福の館。\n\n今日だけ、ゲストを迎え入れる不思議な館です。\n\n扉の前で、白い蝶がふわりと舞いました。\n\n中へ入ると、広間の中央に大きなオルゴールがあります。けれど、その箱はまだ静かなまま。\n\nそばの手紙には、こう記されていました。\n\n四つの謎を解き、散らばった旋律を集めてください。\nあなたの答えが、二人へ届く祝福の一部になります。"
-  },
-  {
-    type: "story",
-    title: "祝福の館からの手紙",
-    image: "assets/images/letter.png",
-    imageAlt: "祝福の館からの手紙",
-    text: "祝福の館へようこそ。\n\nこのオルゴールには、新郎新婦の門出を祝う音色が眠っています。\n\n四つの謎を解き、散らばった旋律を集めてください。\n\nあなたの答えが、二人へ届く祝福の一部になります。"
+    text: "深い森の奥。\n\n小道を進むと、古い洋館が姿を現しました。\n\nその館の名は――\n祝福の館。\n\n今日だけ、ゲストを迎え入れる不思議な館です。\n\n扉の前で、白い蝶がふわりと舞いました。\n\n中へ入ると、広間の中央に大きなオルゴールがあります。けれど、その箱はまだ静かなまま。\n\nそばの手紙には、こう記されていました。",
+    chunkImages: {
+      1: {
+        image: "assets/images/letter.png",
+        imageAlt: "祝福の館からの手紙"
+      }
+    }
   },
   {
     type: "story",
@@ -314,9 +313,10 @@ function renderCoverPage(page) {
 function renderStoryPage(page) {
   const previousButton = renderPreviousButton();
   const themeClass = getPageTheme(page);
-  const storyContent = page.image
-    ? renderStoryImage(page)
-    : `<div class="story-body">${formatStoryText(page.text)}</div>`;
+  const storyContent = [
+    page.text ? `<div class="story-body">${formatStoryText(page.text)}</div>` : "",
+    page.image ? renderStoryImage(page) : ""
+  ].join("");
 
   return `
     <div class="book-spread story-spread ${themeClass}">
@@ -782,11 +782,17 @@ function splitTextPage(page, textKey, maxBlocks) {
     chunks.push(blocks.slice(index, index + maxBlocks).join("\n\n"));
   }
 
-  return chunks.map((text, index) => ({
-    ...page,
-    title: page.title && chunks.length > 1 ? `${page.title} ${index + 1}/${chunks.length}` : page.title,
-    [textKey]: text
-  }));
+  return chunks.map((text, index) => {
+    const chunkImage = page.chunkImages?.[index];
+
+    return {
+      ...page,
+      chunkImages: undefined,
+      title: page.title && chunks.length > 1 ? `${page.title} ${index + 1}/${chunks.length}` : page.title,
+      [textKey]: text,
+      ...(chunkImage || {})
+    };
+  });
 }
 
 function splitTextBlocks(value) {
