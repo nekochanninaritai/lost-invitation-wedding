@@ -105,7 +105,7 @@ const audioPaths = {
   click: "assets/audio/click.mp3",
   correct: "assets/audio/correct.mp3",
   wrong: "assets/audio/wrong.mp3",
-  ending: "assets/audio/ending_musicbox.mp3",
+  ending: "assets/audio/%E3%82%A8%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0.mp3",
   chapter1: "assets/audio/1%E7%AB%A0.mp3",
   chapter2: "assets/audio/2%E7%AB%A0.mp3",
   chapter3: "assets/audio/3%E7%AB%A0.mp3",
@@ -1089,15 +1089,25 @@ function fadeAudioIn(audio, targetVolume, duration) {
 }
 
 function getAmbientAudioKey(page) {
-  if (page.type === "restore" && page.sourceId >= 1 && page.sourceId <= 4) {
-    return `chapter${page.sourceId}`;
-  }
-
   if (page.type === "ending") {
     return "ending";
   }
 
-  return "";
+  const latestChapter = getLatestRestoredChapterForPage(state.currentPageIndex);
+
+  return latestChapter ? `chapter${latestChapter}` : "";
+}
+
+function getLatestRestoredChapterForPage(pageIndex) {
+  for (let index = pageIndex; index >= 0; index -= 1) {
+    const candidate = runtimePages[index];
+
+    if (candidate?.type === "restore" && candidate.sourceId >= 1 && candidate.sourceId <= 4) {
+      return candidate.sourceId;
+    }
+  }
+
+  return 0;
 }
 
 function stopAmbientAudio() {
