@@ -129,6 +129,8 @@ const state = loadProgress();
 state.currentPageIndex = clampPageIndex(state.currentPageIndex);
 state.unlockedPageIndex = clampPageIndex(state.unlockedPageIndex);
 let pageTurnTimer;
+let pageCueTimer;
+let correctCueTimer;
 
 detectOptionalImages();
 
@@ -211,6 +213,7 @@ function renderPage() {
 
   document.body.dataset.pageType = page.type;
   document.body.dataset.roomTheme = themeClass.replace("theme-", "");
+  document.body.dataset.awakeLevel = String(Math.min(restoredTotal, puzzleTotal));
   pageCount.textContent = `${state.currentPageIndex + 1} / ${runtimePages.length} ページ`;
   restoreCount.textContent = `旋律 ${restoredTotal} / ${puzzleTotal}`;
   renderMusicboxGauge(restoredTotal, puzzleTotal);
@@ -218,9 +221,16 @@ function renderPage() {
   book.classList.remove("is-turning");
   void book.offsetWidth;
   book.classList.add("is-turning");
+  document.body.classList.remove("is-page-arriving");
+  void document.body.offsetWidth;
+  document.body.classList.add("is-page-arriving");
   window.clearTimeout(pageTurnTimer);
+  window.clearTimeout(pageCueTimer);
   pageTurnTimer = window.setTimeout(() => {
     book.classList.remove("is-turning");
+  }, 700);
+  pageCueTimer = window.setTimeout(() => {
+    document.body.classList.remove("is-page-arriving");
   }, 700);
 
   if (state.currentPageIndex > state.unlockedPageIndex) {
@@ -256,7 +266,10 @@ function renderPage() {
 }
 
 function schedulePageOverflowUpdate() {
-  requestAnimationFrame(updatePageOverflow);
+  requestAnimationFrame(() => {
+    updatePageOverflow();
+    bindScrollMotion();
+  });
 }
 
 function updatePageOverflow() {
@@ -522,6 +535,7 @@ function renderPaperEffects() {
       <span class="music-note note-3">♬</span>
       <span class="butterfly butterfly-1 direction-ltr"><span class="butterfly-sprite"></span></span>
       <span class="butterfly butterfly-2 direction-rtl"><span class="butterfly-sprite"></span></span>
+      <span class="butterfly butterfly-guide direction-ltr"><span class="butterfly-sprite"></span></span>
       <span class="sparkle sparkle-1"></span>
       <span class="sparkle sparkle-2"></span>
       <span class="sparkle sparkle-3"></span>
@@ -532,6 +546,7 @@ function renderPaperEffects() {
       <span class="light-orb light-orb-1"></span>
       <span class="musicbox-object musicbox-disc"></span>
       <span class="musicbox-object musicbox-gear gear-1"></span>
+      <span class="musicbox-object musicbox-gear gear-2"></span>
       <span class="light-ribbon"></span>
     </div>
   `;
@@ -564,6 +579,7 @@ function bindCommonActions() {
 
   if (openBookButton) {
     openBookButton.addEventListener("click", () => {
+      triggerButtonCue();
       playSound("click");
       unlockPage(1);
       setPage(1);
@@ -572,6 +588,7 @@ function bindCommonActions() {
 
   if (nextPageButton) {
     nextPageButton.addEventListener("click", () => {
+      triggerButtonCue();
       playSound("click");
       unlockPage(state.currentPageIndex + 1);
       setPage(state.currentPageIndex + 1);
@@ -580,6 +597,7 @@ function bindCommonActions() {
 
   if (previousPageButton) {
     previousPageButton.addEventListener("click", () => {
+      triggerButtonCue();
       playSound("click");
       setPage(state.currentPageIndex - 1);
     });
@@ -587,6 +605,7 @@ function bindCommonActions() {
 
   if (restartButton) {
     restartButton.addEventListener("click", () => {
+      triggerButtonCue();
       playSound("click");
       setPage(0);
     });
@@ -594,6 +613,7 @@ function bindCommonActions() {
 
   if (resetProgressButton) {
     resetProgressButton.addEventListener("click", () => {
+      triggerButtonCue();
       playSound("click");
       resetProgress();
     });
@@ -601,6 +621,7 @@ function bindCommonActions() {
 
   if (backButton) {
     backButton.addEventListener("click", () => {
+      triggerButtonCue();
       playSound("click");
       setPage(state.unlockedPageIndex);
     });
@@ -635,10 +656,13 @@ function bindPuzzleForm(page) {
 
     if (isCorrectAnswer(input.value, page)) {
       playSound("correct");
+      triggerCorrectCue(page.restoredPiece);
       markPuzzleCleared(page.id);
       restorePiece(page.restoredPiece);
       unlockPage(state.currentPageIndex + 1);
-      setPage(state.currentPageIndex + 1);
+      window.setTimeout(() => {
+        setPage(state.currentPageIndex + 1);
+      }, prefersReducedMotion() ? 0 : 520);
       return;
     }
 
@@ -648,6 +672,57 @@ function bindPuzzleForm(page) {
     input.classList.add("is-wrong");
     errorMessage.textContent = "まだ違うようです。蝶が示した手がかりをもう一度見直してみましょう。";
     input.select();
+  });
+}
+
+function triggerButtonCue() {
+  document.body.classList.remove("is-button-cue");
+  void document.body.offsetWidth;
+  document.body.classList.add("is-button-cue");
+  window.setTimeout(() => {
+    document.body.classList.remove("is-button-cue");
+  }, 680);
+}
+
+function triggerCorrectCue(pieceId) {
+  document.body.classList.remove(
+    "is-correct-cue",
+    "is-correct-piece-1",
+    "is-correct-piece-2",
+    "is-correct-piece-3",
+    "is-correct-piece-4"
+  );
+  void document.body.offsetWidth;
+  document.body.classList.add("is-correct-cue", `is-correct-piece-${pieceId}`);
+  window.clearTimeout(correctCueTimer);
+  correctCueTimer = window.setTimeout(() => {
+    document.body.classList.remove(
+      "is-correct-cue",
+      "is-correct-piece-1",
+      "is-correct-piece-2",
+      "is-correct-piece-3",
+      "is-correct-piece-4"
+    );
+  }, 2400);
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function bindScrollMotion() {
+  const scrollers = book.querySelectorAll(".book-spread.is-scrollable, .page.is-scrollable");
+
+  scrollers.forEach((element) => {
+    if (element.dataset.scrollMotionBound === "true") {
+      return;
+    }
+
+    element.dataset.scrollMotionBound = "true";
+    element.addEventListener("scroll", () => {
+      const shift = Math.min(24, element.scrollTop * 0.04);
+      element.style.setProperty("--scroll-shift", `${shift}px`);
+    }, { passive: true });
   });
 }
 

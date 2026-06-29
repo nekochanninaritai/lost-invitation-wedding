@@ -240,6 +240,27 @@ body.has-butterfly-image .butterfly::after {
   animation-duration: 28s;
 }
 
+.butterfly-guide {
+  right: 9%;
+  bottom: 10%;
+  width: clamp(86px, 15vw, 132px);
+  height: clamp(64px, 11vw, 98px);
+  opacity: 0.56;
+  animation: guideButterflyRest 8.4s ease-in-out infinite;
+}
+
+body.is-page-arriving .butterfly-guide {
+  animation: guideButterflyArrive 620ms ease-out both, guideButterflyRest 8.4s ease-in-out 620ms infinite;
+}
+
+body.is-button-cue .butterfly-guide {
+  animation: guideButterflyNod 680ms ease-out both, guideButterflyRest 8.4s ease-in-out 680ms infinite;
+}
+
+body.is-correct-cue .butterfly-guide {
+  animation: guideButterflyCelebrate 1.85s ease-out both;
+}
+
 .butterfly-3 {
   bottom: 10%;
   left: -9%;
@@ -378,6 +399,7 @@ body.has-butterfly-image .butterfly::after {
   width: clamp(144px, 26vw, 296px);
   height: clamp(144px, 26vw, 296px);
   animation-duration: 18s;
+  opacity: 0;
 }
 
 .light-ribbon {
@@ -622,6 +644,11 @@ body.has-butterfly-image .butterfly::after {
   overscroll-behavior: contain;
 }
 
+.book-spread.is-scrollable .paper-effects::before,
+.page.is-scrollable .paper-effects::before {
+  transform: translate3d(0, var(--scroll-shift, 0), 0);
+}
+
 .book-spread::before,
 .page::after {
   z-index: 2;
@@ -655,6 +682,10 @@ body.has-butterfly-image .butterfly::after {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+}
+
+body.is-page-arriving .page::after {
+  animation: pageWelcomeGlow 620ms ease-out both;
 }
 
 .page > :not(.paper-effects):not(.room-decor):not(.room-visual) {
@@ -992,6 +1023,78 @@ body[data-page-type="restore"] {
     radial-gradient(circle at 50% 24%, rgba(255, 239, 178, 0.38), transparent 28rem),
     radial-gradient(circle at 82% 92%, rgba(207, 167, 160, 0.22), transparent 25rem),
     linear-gradient(145deg, #eadcc5 0%, #f6ecd9 42%, #dfc8a4 100%);
+}
+
+body[data-awake-level="1"] .paper-effects::before {
+  opacity: 0.32;
+}
+
+body[data-awake-level="2"] .paper-effects::before {
+  opacity: 0.38;
+}
+
+body[data-awake-level="3"] .paper-effects::before {
+  opacity: 0.44;
+}
+
+body[data-awake-level="4"] .paper-effects::before {
+  opacity: 0.5;
+}
+
+body[data-awake-level="1"] .musicbox-disc {
+  opacity: 0.15;
+}
+
+body[data-awake-level="2"] .musicbox-disc,
+body[data-awake-level="2"] .gear-1 {
+  opacity: 0.18;
+}
+
+body[data-awake-level="3"] .musicbox-disc,
+body[data-awake-level="3"] .gear-1,
+body[data-awake-level="3"] .gear-2 {
+  opacity: 0.2;
+}
+
+body[data-awake-level="4"] .musicbox-disc,
+body[data-awake-level="4"] .gear-1,
+body[data-awake-level="4"] .gear-2 {
+  opacity: 0.25;
+  filter: drop-shadow(0 0 24px rgba(228, 199, 114, 0.32));
+}
+
+body[data-awake-level="2"] .theme-time .room-visual::after,
+body.is-correct-piece-2 .theme-time .room-visual::after {
+  animation: pendulumWake 1.9s ease-in-out both;
+}
+
+body[data-awake-level="3"] .theme-garden .room-visual::before,
+body.is-correct-piece-3 .theme-garden .room-visual::before {
+  animation: gardenWake 2.2s ease-out both;
+}
+
+body[data-awake-level="4"] .theme-finale .room-visual::before,
+body.is-correct-piece-4 .theme-finale .room-visual::before {
+  animation: musicboxWake 2.2s ease-out both;
+}
+
+body.is-correct-cue .book {
+  box-shadow:
+    0 0 0 1px rgba(228, 199, 114, 0.34) inset,
+    0 0 42px rgba(224, 190, 112, 0.16),
+    0 30px 64px var(--stage-shadow),
+    var(--shadow);
+}
+
+body.is-correct-piece-1 .paper-effects::after,
+body.is-correct-piece-2 .paper-effects::after,
+body.is-correct-piece-3 .paper-effects::after,
+body.is-correct-piece-4 .paper-effects::after {
+  animation: correctWarmth 2.2s ease-out both;
+}
+
+body.is-correct-piece-4 .light-ribbon {
+  animation: finaleLightSweep 1.9s ease-out both;
 }
 
 .cover-page::before,
@@ -1370,6 +1473,14 @@ h3 {
 .secondary-button:active {
   transform: translateY(1px);
   box-shadow: none;
+}
+
+body.is-button-cue .primary-button,
+body.is-button-cue .secondary-button {
+  box-shadow:
+    0 0 0 1px rgba(255, 246, 203, 0.24) inset,
+    0 10px 22px rgba(111, 60, 52, 0.2),
+    0 0 18px rgba(228, 199, 114, 0.22);
 }
 
 .error-message {
@@ -1794,6 +1905,61 @@ body[data-page-type="ending"] .ending-text {
   }
 }
 
+@keyframes guideButterflyRest {
+  0%,
+  100% {
+    opacity: 0.44;
+    transform: translate3d(0, 0, 0) rotate(-2deg) scale(0.94);
+  }
+
+  48% {
+    opacity: 0.68;
+    transform: translate3d(10px, -14px, 0) rotate(5deg) scale(1);
+  }
+}
+
+@keyframes guideButterflyArrive {
+  0% {
+    opacity: 0;
+    transform: translate3d(54px, 20px, 0) rotate(12deg) scale(0.82);
+  }
+
+  100% {
+    opacity: 0.64;
+    transform: translate3d(0, 0, 0) rotate(-2deg) scale(0.94);
+  }
+}
+
+@keyframes guideButterflyNod {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: translate3d(0, 0, 0) rotate(-2deg) scale(0.94);
+  }
+
+  52% {
+    opacity: 0.8;
+    transform: translate3d(12px, -18px, 0) rotate(7deg) scale(1.03);
+  }
+}
+
+@keyframes guideButterflyCelebrate {
+  0% {
+    opacity: 0.68;
+    transform: translate3d(0, 0, 0) rotate(-2deg) scale(0.94);
+  }
+
+  38% {
+    opacity: 0.92;
+    transform: translate3d(-28px, -36px, 0) rotate(-18deg) scale(1.06);
+  }
+
+  100% {
+    opacity: 0.12;
+    transform: translate3d(82px, -92px, 0) rotate(18deg) scale(0.88);
+  }
+}
+
 @keyframes shimmer {
   0%,
   100% {
@@ -1804,6 +1970,91 @@ body[data-page-type="ending"] .ending-text {
   50% {
     transform: translate3d(6px, -18px, 0) scale(1.08);
     opacity: 0.78;
+  }
+}
+
+@keyframes pageWelcomeGlow {
+  0% {
+    opacity: 0.1;
+    box-shadow: inset 0 0 0 rgba(228, 199, 114, 0);
+  }
+
+  48% {
+    opacity: 0.54;
+    box-shadow: inset 0 0 34px rgba(228, 199, 114, 0.12);
+  }
+
+  100% {
+    opacity: 1;
+    box-shadow: inset 0 0 0 rgba(228, 199, 114, 0);
+  }
+}
+
+@keyframes correctWarmth {
+  0% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+
+  42% {
+    opacity: 0.5;
+    transform: scale(1.025);
+  }
+
+  100% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+}
+
+@keyframes pendulumWake {
+  0%,
+  100% {
+    transform: translateY(130px) rotate(-3deg);
+  }
+
+  45% {
+    transform: translateY(130px) rotate(4deg);
+  }
+}
+
+@keyframes gardenWake {
+  0% {
+    opacity: 0.32;
+    transform: translate3d(0, 8px, 0) scale(0.98);
+  }
+
+  100% {
+    opacity: 0.52;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes musicboxWake {
+  0% {
+    opacity: 0.36;
+    transform: rotate(-2deg) scale(0.96);
+  }
+
+  100% {
+    opacity: 0.56;
+    transform: rotate(0) scale(1.04);
+  }
+}
+
+@keyframes finaleLightSweep {
+  0% {
+    opacity: 0;
+    transform: translate3d(-120%, 0, 0) rotate(8deg);
+  }
+
+  42% {
+    opacity: 0.58;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(260%, 0, 0) rotate(8deg);
   }
 }
 
@@ -1995,6 +2246,21 @@ body[data-page-type="ending"] .ending-text {
     display: none;
   }
 
+  .butterfly-guide {
+    right: 3%;
+    bottom: 5%;
+    width: clamp(72px, 22vw, 104px);
+    height: clamp(54px, 16vw, 78px);
+    opacity: 0.44;
+  }
+
+  body.is-correct-cue .book {
+    box-shadow:
+      0 0 0 1px rgba(228, 199, 114, 0.26) inset,
+      0 20px 42px var(--stage-shadow),
+      var(--shadow);
+  }
+
   .book {
     min-height: 0;
     max-height: calc(100dvh - 76px);
@@ -2058,7 +2324,8 @@ body[data-page-type="ending"] .ending-text {
 
   .light-ribbon,
   .gold-dust,
-  .musicbox-object {
+  .musicbox-object,
+  .butterfly-guide {
     opacity: 0.08 !important;
   }
 }
