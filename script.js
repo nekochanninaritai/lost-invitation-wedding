@@ -116,6 +116,7 @@ const imagePaths = {
 
 const audioState = {
   enabled: false,
+  sfxEnabled: false,
   endingStarted: false,
   endingAudio: null,
   ambientAudio: null,
@@ -125,7 +126,7 @@ const audioState = {
 };
 
 const state = loadProgress();
-state.currentPageIndex = 0;
+state.currentPageIndex = clampPageIndex(state.currentPageIndex);
 state.unlockedPageIndex = clampPageIndex(state.unlockedPageIndex);
 let pageTurnTimer;
 
@@ -138,7 +139,11 @@ function loadProgress() {
     return {
       currentPageIndex: 0,
       unlockedPageIndex: 0,
-      restoredPieces: []
+      restoredPieces: [],
+      clearedPuzzleIds: [],
+      answers: {},
+      audioEnabled: false,
+      sfxEnabled: false
     };
   }
 
@@ -147,13 +152,21 @@ function loadProgress() {
     return {
       currentPageIndex: Number(parsed.currentPageIndex) || 0,
       unlockedPageIndex: Number(parsed.unlockedPageIndex) || 0,
-      restoredPieces: Array.isArray(parsed.restoredPieces) ? parsed.restoredPieces : []
+      restoredPieces: Array.isArray(parsed.restoredPieces) ? parsed.restoredPieces : [],
+      clearedPuzzleIds: Array.isArray(parsed.clearedPuzzleIds) ? parsed.clearedPuzzleIds : [],
+      answers: parsed.answers && typeof parsed.answers === "object" ? parsed.answers : {},
+      audioEnabled: Boolean(parsed.audioEnabled),
+      sfxEnabled: Boolean(parsed.sfxEnabled ?? parsed.audioEnabled)
     };
   } catch {
     return {
       currentPageIndex: 0,
       unlockedPageIndex: 0,
-      restoredPieces: []
+      restoredPieces: [],
+      clearedPuzzleIds: [],
+      answers: {},
+      audioEnabled: false,
+      sfxEnabled: false
     };
   }
 }
@@ -164,6 +177,19 @@ function clampPageIndex(index) {
 
 function saveProgress() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function resetProgress() {
+  localStorage.removeItem(STORAGE_KEY);
+  state.currentPageIndex = 0;
+  state.unlockedPageIndex = 0;
+  state.restoredPieces = [];
+  state.clearedPuzzleIds = [];
+  state.answers = {};
+  state.audioEnabled = false;
+  state.sfxEnabled = false;
+  setAudioEnabled(false, { persist: false });
+  renderPage();
 }
 
 function setPage(index) {
@@ -263,6 +289,7 @@ function renderCoverPage(page) {
           <h1 class="cover-title">${renderAnimatedTitle(page.title)}</h1>
           <p class="lead">${escapeHtml(page.text)}</p>
           <button class="primary-button" type="button" data-action="open-book">祝福の館へ入る</button>
+          <button class="secondary-button reset-button" type="button" data-action="reset-progress">最初からやり直す</button>
         </div>
       </article>
     </div>
@@ -459,6 +486,7 @@ function bindCommonActions() {
   const nextPageButton = book.querySelector("[data-action='next-page']");
   const previousPageButton = book.querySelector("[data-action='previous-page']");
   const restartButton = book.querySelector("[data-action='restart']");
+  const resetProgressButton = book.querySelector("[data-action='reset-progress']");
   const backButton = book.querySelector("[data-action='back-to-unlocked']");
 
   if (openBookButton) {
@@ -487,11 +515,14 @@ function bindCommonActions() {
   if (restartButton) {
     restartButton.addEventListener("click", () => {
       playSound("click");
-      state.currentPageIndex = 0;
-      state.unlockedPageIndex = 0;
-      state.restoredPieces = [];
-      saveProgress();
-      renderPage();
+      setPage(0);
+    });
+  }
+
+  if (resetProgressButton) {
+    resetProgressButton.addEventListener("click", () => {
+      playSound("click");
+      resetProgress();
     });
   }
 
@@ -511,6 +542,9 @@ function bindPuzzleForm(page) {
   const form = document.getElementById("answer-form");
   const input = document.getElementById("answer-input");
   const errorMessage = document.getElementById("error-message");
+  const answerKey = String(page.id);
+
+  input.value = state.answers[answerKey] || "";
 
   input.addEventListener("input", () => {
     const converted = toFullWidthKatakana(input.value);
@@ -518,6 +552,9 @@ function bindPuzzleForm(page) {
     if (input.value !== converted) {
       input.value = converted;
     }
+
+    state.answers[answerKey] = input.value;
+    saveProgress();
   });
 
   form.addEventListener("submit", (event) => {
@@ -525,6 +562,7 @@ function bindPuzzleForm(page) {
 
     if (isCorrectAnswer(input.value, page)) {
       playSound("correct");
+      markPuzzleCleared(page.id);
       restorePiece(page.restoredPiece);
       unlockPage(state.currentPageIndex + 1);
       setPage(state.currentPageIndex + 1);
@@ -538,6 +576,13 @@ function bindPuzzleForm(page) {
     errorMessage.textContent = "まだ違うようです。蝶が示した手がかりをもう一度見直してみましょう。";
     input.select();
   });
+}
+
+function markPuzzleCleared(puzzleId) {
+  if (!state.clearedPuzzleIds.includes(puzzleId)) {
+    state.clearedPuzzleIds.push(puzzleId);
+  }
+  saveProgress();
 }
 
 function restorePiece(pieceId) {
@@ -685,22 +730,36 @@ function setupAudioControls() {
   window.addEventListener("blur", () => pauseAllAudio({ showResumeButton: true }));
 }
 
-function setAudioEnabled(enabled) {
+function setAudioEnabled(enabled, options = {}) {
+  const { persist = true, resumeAudio = true } = options;
   audioState.enabled = enabled;
+  audioState.sfxEnabled = enabled;
+  state.audioEnabled = enabled;
+  state.sfxEnabled = enabled;
   document.body.classList.toggle("is-audio-enabled", enabled);
-  audioStartButton.hidden = enabled;
+  audioStartButton.hidden = enabled && resumeAudio;
   audioToggleButton.textContent = enabled ? "音 ON" : "音 OFF";
   audioToggleButton.setAttribute("aria-pressed", String(enabled));
 
-  if (!enabled && audioState.endingAudio) {
+  if (!enabled) {
     pauseAllAudio();
   }
 
-  updateAmbientAudio(runtimePages[state.currentPageIndex]);
+  if (persist) {
+    saveProgress();
+  }
+
+  if (resumeAudio) {
+    updateAmbientAudio(runtimePages[state.currentPageIndex]);
+  }
 }
 
 function playSound(name) {
-  if (!audioState.enabled) {
+  if (name === "intro" && !audioState.enabled) {
+    return;
+  }
+
+  if (name !== "intro" && !audioState.sfxEnabled) {
     return;
   }
 
@@ -836,5 +895,6 @@ function stopAmbientAudio() {
 
 setupAudioControls();
 renderPage();
+setAudioEnabled(Boolean(state.audioEnabled), { persist: false, resumeAudio: false });
 window.addEventListener("resize", schedulePageOverflowUpdate);
 window.addEventListener("orientationchange", schedulePageOverflowUpdate);

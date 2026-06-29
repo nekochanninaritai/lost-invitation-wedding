@@ -1026,6 +1026,11 @@ h3 {
   margin-top: 0;
 }
 
+.cover-inner .reset-button {
+  min-height: 46px;
+  margin-top: 12px;
+}
+
 .primary-button::after {
   position: absolute;
   top: -40%;
