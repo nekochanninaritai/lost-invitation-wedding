@@ -1,0 +1,25 @@
+# OS/editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# Local development files
+.vscode/
+.idea/
+node_modules/
+
+# Drafts, notes, and test pages
+drafts/
+notes/
+memo/
+test/
+tests/
+*.tmp
+*.bak
+
+# Unused or source assets that should stay out of the public site
+assets/_unused/
+assets/raw/
+assets/source/
+assets/audio/bk/
