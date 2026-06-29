@@ -84,7 +84,7 @@ button {
     radial-gradient(circle at 72% 18%, rgba(228, 199, 114, 0.25), transparent 7rem),
     radial-gradient(circle at 68% 82%, rgba(207, 167, 160, 0.14), transparent 8rem);
   filter: blur(2px);
-  animation: ambientGlow 24s ease-in-out infinite;
+  animation: ambientGlow 15s ease-in-out infinite;
 }
 
 .mansion-silhouette {
@@ -219,12 +219,6 @@ body.has-butterfly-image .butterfly::after {
   animation-delay: -7s;
 }
 
-.note-4 {
-  right: 13%;
-  bottom: 9%;
-  animation-delay: -2s;
-}
-
 .butterfly-1 {
   top: 18%;
   left: -7%;
@@ -246,27 +240,19 @@ body.has-butterfly-image .butterfly::after {
   width: clamp(86px, 15vw, 132px);
   height: clamp(64px, 11vw, 98px);
   opacity: 0.56;
-  animation: guideButterflyRest 8.4s ease-in-out infinite;
+  animation: guideButterflyRest 4.2s ease-in-out infinite;
 }
 
 body.is-page-arriving .butterfly-guide {
-  animation: guideButterflyArrive 620ms ease-out both, guideButterflyRest 8.4s ease-in-out 620ms infinite;
+  animation: guideButterflyArrive 500ms ease-out both, guideButterflyRest 4.2s ease-in-out 500ms infinite;
 }
 
 body.is-button-cue .butterfly-guide {
-  animation: guideButterflyNod 680ms ease-out both, guideButterflyRest 8.4s ease-in-out 680ms infinite;
+  animation: guideButterflyNod 520ms ease-out both, guideButterflyRest 4.2s ease-in-out 520ms infinite;
 }
 
 body.is-correct-cue .butterfly-guide {
   animation: guideButterflyCelebrate 1.85s ease-out both;
-}
-
-.butterfly-3 {
-  bottom: 10%;
-  left: -9%;
-  animation-name: butterflyFlightThree;
-  animation-delay: -15s;
-  animation-duration: 32s;
 }
 
 .sparkle {
@@ -296,18 +282,6 @@ body.is-correct-cue .butterfly-guide {
   right: 27%;
   bottom: 24%;
   animation-delay: -3.1s;
-}
-
-.sparkle-4 {
-  bottom: 18%;
-  left: 28%;
-  animation-delay: -2.2s;
-}
-
-.sparkle-5 {
-  top: 53%;
-  left: 7%;
-  animation-delay: -4.3s;
 }
 
 .gold-dust {
@@ -343,18 +317,6 @@ body.is-correct-cue .butterfly-guide {
   right: 18%;
   bottom: 19%;
   animation-delay: -10s;
-}
-
-.dust-5 {
-  top: 44%;
-  left: 52%;
-  animation-delay: -5s;
-}
-
-.dust-6 {
-  right: 42%;
-  bottom: 8%;
-  animation-delay: -12s;
 }
 
 .musicbox-object {
@@ -610,7 +572,7 @@ body.is-correct-cue .butterfly-guide {
 }
 
 .book.is-turning {
-  animation: pageTurn 560ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: pageTurn 460ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
 .book.is-turning .book-spread::after {
@@ -624,7 +586,7 @@ body.is-correct-cue .butterfly-guide {
     linear-gradient(105deg, transparent 0 38%, rgba(255, 244, 196, 0.42) 49%, transparent 62%),
     radial-gradient(circle at 50% 50%, rgba(228, 199, 114, 0.18), transparent 42%);
   transform: translateX(-45%) skewX(-10deg);
-  animation: pageGleam 620ms ease-out both;
+  animation: pageGleam 480ms ease-out both;
 }
 
 .book-spread {
@@ -685,7 +647,7 @@ body.is-correct-cue .butterfly-guide {
 }
 
 body.is-page-arriving .page::after {
-  animation: pageWelcomeGlow 620ms ease-out both;
+  animation: pageWelcomeGlow 500ms ease-out both;
 }
 
 .page > :not(.paper-effects):not(.room-decor):not(.room-visual) {
@@ -1267,23 +1229,6 @@ h3 {
 
 .ending-text {
   margin: 22px 0 0;
-}
-
-.seal {
-  display: grid;
-  width: 78px;
-  height: 78px;
-  margin: 0 auto 18px;
-  place-items: center;
-  color: #fff8ea;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.24), transparent 18px),
-    var(--wax);
-  box-shadow: 0 10px 22px rgba(111, 60, 52, 0.24);
-  font-family: "Noto Serif JP", serif;
-  font-weight: 700;
-  animation: sealPulse 3.8s ease-in-out infinite;
 }
 
 .envelope-mark {
@@ -2072,19 +2017,6 @@ body[data-page-type="ending"] .ending-text {
   }
 }
 
-@keyframes sealPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: 0 10px 22px rgba(111, 60, 52, 0.24);
-  }
-
-  50% {
-    transform: scale(1.035);
-    box-shadow: 0 12px 28px rgba(111, 60, 52, 0.28), 0 0 24px rgba(228, 199, 114, 0.28);
-  }
-}
-
 @keyframes goldenBurst {
   0% {
     opacity: 0;
@@ -2238,10 +2170,6 @@ body[data-page-type="ending"] .ending-text {
     height: clamp(150px, 48vw, 240px);
   }
 
-  .butterfly-3 {
-    display: none;
-  }
-
   .butterfly-guide {
     right: 3%;
     bottom: 5%;
@@ -2305,6 +2233,46 @@ body[data-page-type="ending"] .ending-text {
   .gauge-dot {
     width: 10px;
     height: 10px;
+  }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .app-shell {
+    min-height: 100dvh;
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .book {
+    max-width: min(94vw, 780px);
+    min-height: auto;
+    padding: 10px;
+  }
+
+  .book-spread {
+    max-height: calc(100dvh - 52px);
+    min-height: 420px;
+  }
+
+  .page {
+    max-height: calc(100dvh - 74px);
+    padding: 18px 16px;
+  }
+
+  .butterfly-2,
+  .sparkle-3,
+  .dust-4 {
+    display: none;
+  }
+
+  .musicbox-disc {
+    opacity: 0.08;
+  }
+
+  .butterfly-guide {
+    width: clamp(60px, 10vw, 92px);
+    height: clamp(45px, 7vw, 68px);
+    opacity: 0.38;
   }
 }
 

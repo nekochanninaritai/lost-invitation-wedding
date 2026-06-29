@@ -227,10 +227,10 @@ function renderPage() {
   window.clearTimeout(pageCueTimer);
   pageTurnTimer = window.setTimeout(() => {
     book.classList.remove("is-turning");
-  }, 700);
+  }, 500);
   pageCueTimer = window.setTimeout(() => {
     document.body.classList.remove("is-page-arriving");
-  }, 700);
+  }, 520);
 
   if (state.currentPageIndex > state.unlockedPageIndex) {
     book.innerHTML = renderSealedPage();
@@ -929,7 +929,7 @@ function playSound(name) {
   }
 
   const audio = new Audio(path);
-  audio.volume = name === "ending" ? 0.35 : 0.55;
+  audio.volume = getEffectVolume(name);
   audioState.currentEffects.push(audio);
   audio.addEventListener("ended", () => {
     audioState.currentEffects = audioState.currentEffects.filter((item) => item !== audio);
@@ -952,14 +952,22 @@ function playIntroSound() {
     return;
   }
 
+  if (audioState.introAudio && !audioState.introAudio.paused) {
+    return;
+  }
+
   if (audioState.introAudio) {
     audioState.introAudio.pause();
     audioState.introAudio.currentTime = 0;
   }
 
   audioState.introAudio = new Audio(audioPaths.intro);
-  audioState.introAudio.volume = 0.5;
-  audioState.introAudio.play().catch(() => {});
+  audioState.introAudio.loop = true;
+  audioState.introAudio.volume = 0;
+  audioState.introAudio
+    .play()
+    .then(() => fadeAudioIn(audioState.introAudio, 0.3, 760))
+    .catch(() => {});
 }
 
 function pauseAllAudio(options = {}) {
@@ -1013,15 +1021,65 @@ function updateAmbientAudio(page) {
     return;
   }
 
-  if (audioState.ambientKey !== ambientKey) {
+  const shouldFadeIn = audioState.ambientKey !== ambientKey;
+
+  if (shouldFadeIn) {
     stopAmbientAudio();
     audioState.ambientAudio = new Audio(audioPaths[ambientKey]);
     audioState.ambientAudio.loop = true;
-    audioState.ambientAudio.volume = ambientKey === "newOverture" ? 0.38 : 0.32;
+    audioState.ambientAudio.volume = 0;
     audioState.ambientKey = ambientKey;
   }
 
-  audioState.ambientAudio.play().catch(() => {});
+  audioState.ambientAudio
+    .play()
+    .then(() => {
+      if (shouldFadeIn) {
+        fadeAudioIn(audioState.ambientAudio, getAmbientVolume(ambientKey), 920);
+      }
+    })
+    .catch(() => {});
+}
+
+function getEffectVolume(name) {
+  const volumes = {
+    click: 0.24,
+    correct: 0.36,
+    wrong: 0.22
+  };
+
+  return volumes[name] ?? 0.3;
+}
+
+function getAmbientVolume(ambientKey) {
+  if (ambientKey === "newOverture") {
+    return 0.34;
+  }
+
+  if (ambientKey === "ending") {
+    return 0.31;
+  }
+
+  return 0.3;
+}
+
+function fadeAudioIn(audio, targetVolume, duration) {
+  const startedAt = performance.now();
+
+  function step(now) {
+    if (audio.paused) {
+      return;
+    }
+
+    const progress = Math.min(1, (now - startedAt) / duration);
+    audio.volume = targetVolume * progress;
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
 }
 
 function getAmbientAudioKey(page) {
