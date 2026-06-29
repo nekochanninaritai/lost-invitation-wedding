@@ -67,7 +67,7 @@ const pageCount = document.getElementById("page-count");
 const restoreCount = document.getElementById("restore-count");
 
 const state = loadProgress();
-state.currentPageIndex = clampPageIndex(state.currentPageIndex);
+state.currentPageIndex = 0;
 state.unlockedPageIndex = clampPageIndex(state.unlockedPageIndex);
 
 function loadProgress() {
