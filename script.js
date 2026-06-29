@@ -115,7 +115,8 @@ const audioState = {
   enabled: false,
   endingStarted: false,
   endingAudio: null,
-  introAudio: null
+  introAudio: null,
+  currentEffects: []
 };
 
 const state = loadProgress();
@@ -604,6 +605,16 @@ function setupAudioControls() {
     setAudioEnabled(!audioState.enabled);
     playSound("click");
   });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      pauseAllAudio({ showResumeButton: true });
+    }
+  });
+
+  window.addEventListener("pagehide", () => pauseAllAudio({ showResumeButton: true }));
+  window.addEventListener("beforeunload", () => pauseAllAudio({ showResumeButton: true }));
+  window.addEventListener("blur", () => pauseAllAudio({ showResumeButton: true }));
 }
 
 function setAudioEnabled(enabled) {
@@ -614,7 +625,7 @@ function setAudioEnabled(enabled) {
   audioToggleButton.setAttribute("aria-pressed", String(enabled));
 
   if (!enabled && audioState.endingAudio) {
-    audioState.endingAudio.pause();
+    pauseAllAudio();
   }
 
   updateAmbientAudio(runtimePages[state.currentPageIndex]);
@@ -638,6 +649,10 @@ function playSound(name) {
 
   const audio = new Audio(path);
   audio.volume = name === "ending" ? 0.35 : 0.55;
+  audioState.currentEffects.push(audio);
+  audio.addEventListener("ended", () => {
+    audioState.currentEffects = audioState.currentEffects.filter((item) => item !== audio);
+  }, { once: true });
   const shouldPlayIntroAfterEffect = ["click", "correct", "wrong"].includes(name) && !isEndingPage();
 
   if (shouldPlayIntroAfterEffect) {
@@ -666,12 +681,35 @@ function playIntroSound() {
   audioState.introAudio.play().catch(() => {});
 }
 
+function pauseAllAudio(options = {}) {
+  if (audioState.introAudio) {
+    audioState.introAudio.pause();
+    audioState.introAudio.currentTime = 0;
+  }
+
+  if (audioState.endingAudio) {
+    audioState.endingAudio.pause();
+    audioState.endingAudio.currentTime = 0;
+    audioState.endingStarted = false;
+  }
+
+  audioState.currentEffects.forEach((audio) => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+  audioState.currentEffects = [];
+
+  if (options.showResumeButton && audioState.enabled) {
+    audioStartButton.hidden = false;
+  }
+}
+
 function isEndingPage() {
   return runtimePages[state.currentPageIndex]?.type === "ending";
 }
 
 function updateAmbientAudio(page) {
-  if (!audioState.enabled) {
+  if (!audioState.enabled || document.hidden) {
     return;
   }
 
