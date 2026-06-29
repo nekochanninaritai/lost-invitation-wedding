@@ -589,6 +589,13 @@ function playSound(name) {
 
   const audio = new Audio(path);
   audio.volume = name === "ending" ? 0.35 : 0.55;
+
+  if (name === "click") {
+    audio.addEventListener("ended", () => {
+      playSound("intro");
+    }, { once: true });
+  }
+
   audio.play().catch(() => {});
 }
 
