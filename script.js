@@ -108,7 +108,7 @@ const audioPaths = {
 };
 
 const imagePaths = {
-  butterfly: "assets/images/butterfly_gold.png"
+  butterfly: "assets/images/butterfly.gif"
 };
 
 const audioState = {
