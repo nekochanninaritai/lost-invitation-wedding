@@ -1290,14 +1290,10 @@ h3 {
   width: min(260px, 78vw);
   height: 156px;
   margin: 0 auto 26px;
-  border: 1px solid rgba(111, 60, 52, 0.28);
-  border-radius: 8px;
-  background:
-    radial-gradient(circle at 50% 55%, rgba(157, 63, 55, 0.2) 0 18px, transparent 19px),
-    linear-gradient(32deg, transparent 49%, rgba(111, 60, 52, 0.16) 50%, transparent 51%),
-    linear-gradient(148deg, transparent 49%, rgba(111, 60, 52, 0.16) 50%, transparent 51%),
-    linear-gradient(180deg, #fff8ed, #ead7ba);
-  box-shadow: inset 0 0 0 8px rgba(255, 250, 240, 0.54);
+  background: url("assets/images/title_butterfly.png?v=20260629-title") center / contain no-repeat;
+  filter:
+    drop-shadow(0 10px 18px rgba(111, 60, 52, 0.12))
+    drop-shadow(0 0 18px rgba(255, 248, 222, 0.28));
 }
 
 .invitation-preview {
