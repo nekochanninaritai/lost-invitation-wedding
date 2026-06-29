@@ -114,7 +114,8 @@ const imagePaths = {
 const audioState = {
   enabled: false,
   endingStarted: false,
-  endingAudio: null
+  endingAudio: null,
+  introAudio: null
 };
 
 const state = loadProgress();
@@ -581,6 +582,11 @@ function playSound(name) {
     return;
   }
 
+  if (name === "intro") {
+    playIntroSound();
+    return;
+  }
+
   const path = audioPaths[name];
 
   if (!path) {
@@ -589,14 +595,36 @@ function playSound(name) {
 
   const audio = new Audio(path);
   audio.volume = name === "ending" ? 0.35 : 0.55;
+  const shouldPlayIntroAfterEffect = ["click", "correct", "wrong"].includes(name) && !isEndingPage();
 
-  if (name === "click") {
+  if (shouldPlayIntroAfterEffect) {
     audio.addEventListener("ended", () => {
-      playSound("intro");
+      if (!isEndingPage()) {
+        playIntroSound();
+      }
     }, { once: true });
   }
 
   audio.play().catch(() => {});
+}
+
+function playIntroSound() {
+  if (!audioPaths.intro || isEndingPage()) {
+    return;
+  }
+
+  if (audioState.introAudio) {
+    audioState.introAudio.pause();
+    audioState.introAudio.currentTime = 0;
+  }
+
+  audioState.introAudio = new Audio(audioPaths.intro);
+  audioState.introAudio.volume = 0.5;
+  audioState.introAudio.play().catch(() => {});
+}
+
+function isEndingPage() {
+  return runtimePages[state.currentPageIndex]?.type === "ending";
 }
 
 function updateAmbientAudio(page) {
@@ -611,6 +639,11 @@ function updateAmbientAudio(page) {
       audioState.endingStarted = false;
     }
     return;
+  }
+
+  if (audioState.introAudio) {
+    audioState.introAudio.pause();
+    audioState.introAudio.currentTime = 0;
   }
 
   if (!audioState.endingAudio) {
