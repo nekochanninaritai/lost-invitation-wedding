@@ -505,8 +505,6 @@ function bindPuzzleForm(page) {
     errorMessage.textContent = "まだ違うようです。蝶が示した手がかりをもう一度見直してみましょう。";
     input.select();
   });
-
-  requestAnimationFrame(() => input.focus());
 }
 
 function restorePiece(pieceId) {
@@ -518,21 +516,58 @@ function restorePiece(pieceId) {
 
 function buildRuntimePages(sourcePages) {
   return sourcePages.flatMap((page) => {
+    if (page.type === "story") {
+      return splitTextPage(page, "text", 6);
+    }
+
+    if (page.type === "ending") {
+      return splitTextPage(page, "text", 5);
+    }
+
     if (page.type !== "puzzle") {
       return [page];
     }
 
+    const restorePages = splitTextPage({
+      type: "restore",
+      sourceId: page.id,
+      explanation: page.explanation,
+      restoredPiece: page.restoredPiece,
+      restoredText: page.restoredText
+    }, "explanation", 4);
+
     return [
       page,
-      {
-        type: "restore",
-        sourceId: page.id,
-        explanation: page.explanation,
-        restoredPiece: page.restoredPiece,
-        restoredText: page.restoredText
-      }
+      ...restorePages
     ];
   });
+}
+
+function splitTextPage(page, textKey, maxBlocks) {
+  const blocks = splitTextBlocks(page[textKey]);
+
+  if (blocks.length <= maxBlocks) {
+    return [page];
+  }
+
+  const chunks = [];
+
+  for (let index = 0; index < blocks.length; index += maxBlocks) {
+    chunks.push(blocks.slice(index, index + maxBlocks).join("\n\n"));
+  }
+
+  return chunks.map((text, index) => ({
+    ...page,
+    title: page.title && chunks.length > 1 ? `${page.title} ${index + 1}/${chunks.length}` : page.title,
+    [textKey]: text
+  }));
+}
+
+function splitTextBlocks(value) {
+  return String(value)
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
 }
 
 function toFullWidthKatakana(value) {

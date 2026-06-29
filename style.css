@@ -121,7 +121,7 @@ button {
   position: absolute;
   color: rgba(255, 248, 222, 0.74);
   font-family: "Noto Serif JP", serif;
-  font-size: clamp(2rem, 5vw, 3.35rem);
+  font-size: clamp(3rem, 7.5vw, 5rem);
   text-shadow:
     0 1px 0 rgba(111, 60, 52, 0.18),
     0 0 14px rgba(255, 248, 222, 0.82),
@@ -338,7 +338,7 @@ body.has-butterfly-image .butterfly::after {
 .musicbox-object {
   position: absolute;
   pointer-events: none;
-  opacity: 0.16;
+  opacity: 0.12;
   border: 1px solid rgba(185, 154, 99, 0.32);
   filter: drop-shadow(0 0 18px rgba(228, 199, 114, 0.24));
 }
@@ -346,8 +346,8 @@ body.has-butterfly-image .butterfly::after {
 .musicbox-disc {
   top: 12%;
   right: 7%;
-  width: clamp(160px, 31vw, 320px);
-  height: clamp(160px, 31vw, 320px);
+  width: clamp(320px, 58vw, 640px);
+  height: clamp(320px, 58vw, 640px);
   border-radius: 50%;
   background:
     radial-gradient(circle, transparent 0 10%, rgba(228, 199, 114, 0.28) 11% 12%, transparent 13% 34%, rgba(111, 60, 52, 0.14) 35% 36%, transparent 37%),
@@ -356,8 +356,8 @@ body.has-butterfly-image .butterfly::after {
 }
 
 .musicbox-gear {
-  width: clamp(96px, 18vw, 190px);
-  height: clamp(96px, 18vw, 190px);
+  width: clamp(190px, 34vw, 380px);
+  height: clamp(190px, 34vw, 380px);
   border-radius: 50%;
   background:
     radial-gradient(circle, transparent 0 30%, rgba(255, 247, 220, 0.52) 31% 42%, transparent 43%),
@@ -367,15 +367,15 @@ body.has-butterfly-image .butterfly::after {
 }
 
 .gear-1 {
-  left: 6%;
-  bottom: 18%;
+  left: -18%;
+  bottom: 10%;
 }
 
 .gear-2 {
   top: 48%;
-  right: 13%;
-  width: clamp(72px, 14vw, 148px);
-  height: clamp(72px, 14vw, 148px);
+  right: -12%;
+  width: clamp(144px, 26vw, 296px);
+  height: clamp(144px, 26vw, 296px);
   animation-duration: 18s;
 }
 
@@ -1577,7 +1577,7 @@ body[data-page-type="ending"] .ending-text {
 
 @media (max-width: 520px) {
   .music-note {
-    font-size: clamp(2rem, 9vw, 3rem);
+    font-size: clamp(2.9rem, 13vw, 4.5rem);
   }
 
   .sparkle {
@@ -1591,13 +1591,26 @@ body[data-page-type="ending"] .ending-text {
   }
 
   .musicbox-disc {
-    right: -22%;
-    opacity: 0.13;
+    right: -46%;
+    width: clamp(280px, 86vw, 420px);
+    height: clamp(280px, 86vw, 420px);
+    opacity: 0.11;
   }
 
   .gear-1,
   .gear-2 {
-    opacity: 0.12;
+    opacity: 0.1;
+  }
+
+  .gear-1 {
+    left: -40%;
+    bottom: 8%;
+  }
+
+  .gear-2 {
+    right: -36%;
+    width: clamp(150px, 48vw, 240px);
+    height: clamp(150px, 48vw, 240px);
   }
 
   .butterfly-3 {
