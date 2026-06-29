@@ -661,13 +661,16 @@ function bindPuzzleForm(page) {
     event.preventDefault();
 
     if (isCorrectAnswer(input.value, page)) {
-      playSound("correct");
+      const nextPageIndex = state.currentPageIndex + 1;
+
       triggerCorrectCue(page.restoredPiece);
       markPuzzleCleared(page.id);
       restorePiece(page.restoredPiece);
-      unlockPage(state.currentPageIndex + 1);
+      unlockPage(nextPageIndex);
+      playSound("correct");
+      updateAmbientAudio(runtimePages[nextPageIndex]);
       window.setTimeout(() => {
-        setPage(state.currentPageIndex + 1);
+        setPage(nextPageIndex);
       }, prefersReducedMotion() ? 0 : 520);
       return;
     }
@@ -940,7 +943,7 @@ function playSound(name) {
   audio.addEventListener("ended", () => {
     audioState.currentEffects = audioState.currentEffects.filter((item) => item !== audio);
   }, { once: true });
-  const shouldPlayIntroAfterEffect = ["click", "correct", "wrong"].includes(name) && !isEndingPage();
+  const shouldPlayIntroAfterEffect = ["click", "wrong"].includes(name) && !isEndingPage();
 
   if (shouldPlayIntroAfterEffect) {
     audio.addEventListener("ended", () => {

@@ -1204,7 +1204,7 @@ h3 {
 }
 
 .story-image-frame.is-letter-image img {
-  max-height: min(58dvh, 560px);
+  max-height: min(43.5dvh, 420px);
 }
 
 .story-body p,
@@ -2234,11 +2234,12 @@ body[data-page-type="ending"] .ending-text {
   }
 
   .story-image-frame.is-letter-image {
+    width: min(75%, 420px);
     margin-top: 14px;
   }
 
   .story-image-frame.is-letter-image img {
-    max-height: min(50dvh, calc(100dvh - 380px));
+    max-height: min(37.5dvh, calc((100dvh - 380px) * 0.75));
   }
 
   .story-page.has-story-image .page-actions {
