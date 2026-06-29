@@ -1203,6 +1203,10 @@ h3 {
   border-radius: 6px;
 }
 
+.story-image-frame.is-letter-image img {
+  max-height: min(58dvh, 560px);
+}
+
 .story-body p,
 .ending-text p,
 .explanation-text p {
@@ -2214,6 +2218,31 @@ body[data-page-type="ending"] .ending-text {
 
   .story-image-frame img {
     max-height: calc(100dvh - 260px);
+  }
+
+  .story-page.has-story-image {
+    padding-bottom: 18px;
+  }
+
+  .story-page.has-story-image h2 {
+    font-size: clamp(1.75rem, 10vw, 2.8rem);
+  }
+
+  .story-page.has-story-image .story-body {
+    margin-top: 14px;
+    line-height: 1.8;
+  }
+
+  .story-image-frame.is-letter-image {
+    margin-top: 14px;
+  }
+
+  .story-image-frame.is-letter-image img {
+    max-height: min(50dvh, calc(100dvh - 380px));
+  }
+
+  .story-page.has-story-image .page-actions {
+    margin-top: 16px;
   }
 
   .audio-start,

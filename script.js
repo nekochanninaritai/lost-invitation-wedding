@@ -313,6 +313,7 @@ function renderCoverPage(page) {
 function renderStoryPage(page) {
   const previousButton = renderPreviousButton();
   const themeClass = getPageTheme(page);
+  const imageClass = page.image ? " has-story-image" : "";
   const storyContent = [
     page.text ? `<div class="story-body">${formatStoryText(page.text)}</div>` : "",
     page.image ? renderStoryImage(page) : ""
@@ -320,7 +321,7 @@ function renderStoryPage(page) {
 
   return `
     <div class="book-spread story-spread ${themeClass}">
-      <article class="page story-page room-page">
+      <article class="page story-page room-page${imageClass}">
         ${renderPaperEffects()}
         ${renderRoomDecor(themeClass)}
         <p class="eyebrow">Story</p>
@@ -341,8 +342,10 @@ function renderStoryPage(page) {
 }
 
 function renderStoryImage(page) {
+  const imageClass = page.image?.includes("letter.png") ? " is-letter-image" : "";
+
   return `
-    <figure class="story-image-frame">
+    <figure class="story-image-frame${imageClass}">
       <img src="${escapeHtml(page.image)}" alt="${escapeHtml(page.imageAlt || page.title)}">
     </figure>
   `;
