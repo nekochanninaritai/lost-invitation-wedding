@@ -1,7 +1,7 @@
 const pages = [
   {
     type: "cover",
-    title: "蝶が運ぶ、最後の祝福",
+    title: "蝶が運ぶ、はじまりの旋律",
     text: "深い森の奥。"
   },
   {
@@ -387,8 +387,8 @@ function renderPaperEffects() {
       <span class="music-note note-1">♪</span>
       <span class="music-note note-2">♫</span>
       <span class="music-note note-3">♬</span>
-      <span class="butterfly butterfly-1"></span>
-      <span class="butterfly butterfly-2"></span>
+      <span class="butterfly butterfly-1 direction-ltr"><span class="butterfly-sprite"></span></span>
+      <span class="butterfly butterfly-2 direction-rtl"><span class="butterfly-sprite"></span></span>
       <span class="sparkle sparkle-1"></span>
       <span class="sparkle sparkle-2"></span>
       <span class="sparkle sparkle-3"></span>
