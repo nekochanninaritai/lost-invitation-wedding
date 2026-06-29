@@ -17,6 +17,42 @@ const pages = [
     restoredText: "皆さまへ"
   },
   {
+    type: "puzzle",
+    id: 2,
+    leftTitle: "第二の断片",
+    story: "招待状の余白に、次のページへ続く小さな印が残されていました。",
+    puzzleTitle: "第二の謎",
+    question: "テスト２",
+    answer: "２",
+    explanation: "サンプル問題２の答えは「２」でした。",
+    restoredPiece: 2,
+    restoredText: "第二の断片"
+  },
+  {
+    type: "puzzle",
+    id: 3,
+    leftTitle: "第三の断片",
+    story: "古い楽譜の線の間に、三つ目の断片がそっと挟まっていました。",
+    puzzleTitle: "第三の謎",
+    question: "テスト３",
+    answer: "３",
+    explanation: "サンプル問題３の答えは「３」でした。",
+    restoredPiece: 3,
+    restoredText: "第三の断片"
+  },
+  {
+    type: "puzzle",
+    id: 4,
+    leftTitle: "第四の断片",
+    story: "最後の紙片は、封蝋の裏側に静かに隠されていました。",
+    puzzleTitle: "第四の謎",
+    question: "テスト４",
+    answer: "４",
+    explanation: "サンプル問題４の答えは「４」でした。",
+    restoredPiece: 4,
+    restoredText: "第四の断片"
+  },
+  {
     type: "ending",
     title: "復元された招待状",
     text: "人生は謎解きによく似ています。\n\n一人では解けない問題も、\n誰かとなら答えに辿り着ける。\n\n今日ここに集まってくださった皆さまのおかげで、\n私たちはここまで歩んでくることができました。\n\nそしてこれからも、\n二人で新しい謎を解き続けていきます。\n\n本日はご列席いただき、\n誠にありがとうございました。"
@@ -269,6 +305,14 @@ function bindPuzzleForm(page) {
   const input = document.getElementById("answer-input");
   const errorMessage = document.getElementById("error-message");
 
+  input.addEventListener("input", () => {
+    const converted = toFullWidthKatakana(input.value);
+
+    if (input.value !== converted) {
+      input.value = converted;
+    }
+  });
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -312,15 +356,22 @@ function buildRuntimePages(sourcePages) {
   });
 }
 
-function normalizeAnswer(value) {
+function toFullWidthKatakana(value) {
   return value
-    .trim()
     .normalize("NFKC")
-    .replace(/\s+/g, "")
-    .replace(/[\u30a1-\u30f6]/g, (char) =>
-      String.fromCharCode(char.charCodeAt(0) - 0x60)
+    .replace(/[\u3041-\u3096]/g, (char) =>
+      String.fromCharCode(char.charCodeAt(0) + 0x60)
     )
-    .toLowerCase();
+    .replace(/[A-Za-z0-9]/g, (char) =>
+      String.fromCharCode(char.charCodeAt(0) + 0xfee0)
+    );
+}
+
+function normalizeAnswer(value) {
+  return toFullWidthKatakana(value)
+    .trim()
+    .replace(/\s+/g, "")
+    .toUpperCase();
 }
 
 function isCorrectAnswer(inputValue, page) {
