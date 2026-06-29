@@ -287,7 +287,6 @@ function renderCoverPage(page) {
         ${renderRoomDecor("theme-prelude")}
         <div class="cover-inner">
           <div class="envelope-mark" aria-hidden="true"></div>
-          <div class="seal" aria-hidden="true">封</div>
           <p class="eyebrow">Blessing Manor</p>
           <h1 class="cover-title">${renderAnimatedTitle(page.title)}</h1>
           <p class="lead">${escapeHtml(page.text)}</p>
