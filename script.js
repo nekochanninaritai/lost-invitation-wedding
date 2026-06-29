@@ -101,7 +101,7 @@ const audioStartButton = document.getElementById("audio-start");
 const audioToggleButton = document.getElementById("audio-toggle");
 
 const audioPaths = {
-  intro: "assets/audio/musicbox_intro.mp3",
+  intro: "assets/audio/%E3%83%97%E3%83%AD%E3%83%AD%E3%83%BC%E3%82%B0.mp3",
   click: "assets/audio/click.mp3",
   correct: "assets/audio/correct.mp3",
   wrong: "assets/audio/wrong.mp3",
