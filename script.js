@@ -207,19 +207,26 @@ function renderCoverPage(page) {
 }
 
 function renderStoryPage(page) {
+  const previousButton = renderPreviousButton();
+
   return `
     <div class="book-spread story-spread">
       <article class="page story-page">
         <p class="eyebrow">Story</p>
         <h2>${escapeHtml(page.title)}</h2>
         <div class="story-body">${formatStoryText(page.text)}</div>
-        <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
+        <div class="page-actions">
+          ${previousButton}
+          <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
+        </div>
       </article>
     </div>
   `;
 }
 
 function renderPuzzlePage(page) {
+  const previousButton = renderPreviousButton();
+
   return `
     <div class="book-spread">
       <article class="page">
@@ -238,12 +245,15 @@ function renderPuzzlePage(page) {
           <button class="primary-button" type="submit">回答する</button>
           <p id="error-message" class="error-message" role="alert" aria-live="polite"></p>
         </form>
+        ${previousButton}
       </article>
     </div>
   `;
 }
 
 function renderRestorePage(page) {
+  const previousButton = renderPreviousButton();
+
   return `
     <div class="book-spread">
       <article class="page restore-card">
@@ -252,7 +262,10 @@ function renderRestorePage(page) {
           <p class="eyebrow">Restored</p>
           <h2>旋律が戻りました</h2>
           <div class="explanation-text">${formatStoryText(page.explanation)}</div>
-          <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
+          <div class="page-actions">
+            ${previousButton}
+            <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
+          </div>
         </div>
       </article>
     </div>
@@ -260,6 +273,8 @@ function renderRestorePage(page) {
 }
 
 function renderEndingPage(page) {
+  const previousButton = renderPreviousButton();
+
   return `
     <div class="book-spread">
       <article class="page">
@@ -270,7 +285,10 @@ function renderEndingPage(page) {
       <article class="page">
         <p class="eyebrow">Final Message</p>
         <div class="ending-text">${formatStoryText(page.text)}</div>
-        <button class="secondary-button" type="button" data-action="restart">もう一度、館を訪れる</button>
+        <div class="page-actions">
+          ${previousButton}
+          <button class="secondary-button" type="button" data-action="restart">もう一度、館を訪れる</button>
+        </div>
       </article>
     </div>
   `;
@@ -308,9 +326,18 @@ function renderInvitationPreview(isComplete = false) {
   return `<div class="invitation-preview" aria-label="復元中のオルゴール">${pieces.join("")}</div>`;
 }
 
+function renderPreviousButton() {
+  if (state.currentPageIndex <= 0) {
+    return "";
+  }
+
+  return '<button class="secondary-button" type="button" data-action="previous-page">前のページへ戻る</button>';
+}
+
 function bindCommonActions() {
   const openBookButton = book.querySelector("[data-action='open-book']");
   const nextPageButton = book.querySelector("[data-action='next-page']");
+  const previousPageButton = book.querySelector("[data-action='previous-page']");
   const restartButton = book.querySelector("[data-action='restart']");
   const backButton = book.querySelector("[data-action='back-to-unlocked']");
 
@@ -325,6 +352,12 @@ function bindCommonActions() {
     nextPageButton.addEventListener("click", () => {
       unlockPage(state.currentPageIndex + 1);
       setPage(state.currentPageIndex + 1);
+    });
+  }
+
+  if (previousPageButton) {
+    previousPageButton.addEventListener("click", () => {
+      setPage(state.currentPageIndex - 1);
     });
   }
 
