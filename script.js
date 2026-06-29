@@ -95,7 +95,8 @@ const pages = [
   {
     type: "story",
     title: "Epilogue 2 ― 感謝の気持ちを込めて ―",
-    text: "[[ending-letter]]",
+    text: "",
+    letterImage: true,
     buttonText: "次のページへ",
     ambientAudioKey: "ending",
     variant: "epilogue",
@@ -344,10 +345,11 @@ function renderStoryPage(page) {
   const themeClass = getPageTheme(page);
   const imageClass = page.image ? " has-story-image" : "";
   const storyText = page.text ? `<div class="story-body">${formatStoryText(page.text, page)}</div>` : "";
+  const storyLetter = page.letterImage ? renderEndingLetterFrame() : "";
   const storyImage = page.image ? renderStoryImage(page) : "";
   const storyContent = page.imageFirst
-    ? [storyImage, storyText].join("")
-    : [storyText, storyImage].join("");
+    ? [storyImage, storyText, storyLetter].join("")
+    : [storyText, storyLetter, storyImage].join("");
   const variantClasses = page.variant
     ? page.variant.split(/\s+/).filter(Boolean).map((variant) => `is-${variant}`)
     : [];
@@ -905,10 +907,6 @@ function formatStoryText(value, page = {}) {
 
       if (!trimmed) {
         return "";
-      }
-
-      if (page.variant === "epilogue" && trimmed === "[[ending-letter]]") {
-        return renderEndingLetterFrame();
       }
 
       if (trimmed.startsWith(">")) {
