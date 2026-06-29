@@ -89,13 +89,23 @@ button {
   pointer-events: none;
 }
 
-.music-note {
+.music-note,
+.butterfly {
   position: absolute;
   color: rgba(154, 89, 75, 0.22);
   font-family: "Noto Serif JP", serif;
   font-size: clamp(1.4rem, 4vw, 2.4rem);
   text-shadow: 0 0 18px rgba(228, 199, 114, 0.34);
+}
+
+.music-note {
   animation: floatNote 12s ease-in-out infinite;
+}
+
+.butterfly {
+  color: rgba(228, 199, 114, 0.34);
+  font-size: clamp(1.1rem, 3.2vw, 1.9rem);
+  animation: flutterButterfly 14s ease-in-out infinite;
 }
 
 .note-1 {
@@ -119,6 +129,23 @@ button {
   right: 13%;
   bottom: 9%;
   animation-delay: -2s;
+}
+
+.butterfly-1 {
+  top: 18%;
+  left: 43%;
+}
+
+.butterfly-2 {
+  right: 23%;
+  bottom: 32%;
+  animation-delay: -5s;
+}
+
+.butterfly-3 {
+  bottom: 12%;
+  left: 48%;
+  animation-delay: -9s;
 }
 
 .sparkle {
@@ -767,6 +794,24 @@ body[data-page-type="ending"] .ending-text {
   72% {
     transform: translate3d(-6px, -12px, 0) rotate(2deg);
     opacity: 0.2;
+  }
+}
+
+@keyframes flutterButterfly {
+  0%,
+  100% {
+    opacity: 0.14;
+    transform: translate3d(0, 0, 0) rotate(45deg) scaleX(1);
+  }
+
+  35% {
+    opacity: 0.42;
+    transform: translate3d(14px, -18px, 0) rotate(58deg) scaleX(0.82);
+  }
+
+  68% {
+    opacity: 0.24;
+    transform: translate3d(-10px, -34px, 0) rotate(36deg) scaleX(1.12);
   }
 }
 

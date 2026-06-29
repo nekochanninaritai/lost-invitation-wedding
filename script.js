@@ -1,61 +1,61 @@
 const pages = [
   {
     type: "cover",
-    title: "失われた招待状",
-    text: "この結婚式には、本来もう一枚の招待状が存在していました。しかし長い年月の中で失われ、最後のメッセージだけが欠けてしまったのです。封印された招待状を開き、残された断片を集めてください。"
+    title: "蝶が運ぶ、最後の祝福",
+    text: "深い森の奥に、百年に一度だけ姿を現す祝福の館がありました。止まったままのオルゴールに四つの旋律を戻すため、白い蝶が二人を館へと導きます。"
   },
   {
     type: "puzzle",
     id: 1,
-    leftTitle: "第一の断片",
-    story: "古い封筒の中から、破れた招待状の一部が見つかりました。そこには、ふたりが今日いちばん伝えたい相手を示す言葉が隠されています。",
-    puzzleTitle: "第一の謎",
+    leftTitle: "Prelude ― 前奏 ―",
+    story: "祝福の館へようこそ。この館では百年前から、祝福の演奏会が止まったままです。オルゴールを完成させる四つの旋律は館の各所へ散り、その音色を失いました。白い蝶に導かれ、二人は最初の旋律が眠る部屋へ足を踏み入れます。",
+    puzzleTitle: "謎解き①",
     question: "ふたりが大切にしている言葉です。『ありがとう』の気持ちを、今日という日に一番届けたい相手は誰でしょう？",
     answer: "みなさま",
-    explanation: "正解は「みなさま」。今日ここに集まってくださった一人ひとりへ、ふたりから感謝を込めて。",
+    explanation: "謎が解かれた瞬間、館の奥から澄んだ音色がひとつ響き渡ります。眠っていた蝶が羽を広げ、嬉しそうに奥の廊下へ飛んでいきました。最初の旋律が、オルゴールへ戻ったのです。",
     restoredPiece: 1,
-    restoredText: "皆さまへ"
+    restoredText: "第一の旋律"
   },
   {
     type: "puzzle",
     id: 2,
-    leftTitle: "第二の断片",
-    story: "招待状の余白に、次のページへ続く小さな印が残されていました。",
-    puzzleTitle: "第二の謎",
+    leftTitle: "Cantabile ― 歌うように ―",
+    story: "館の廊下には、長い年月を重ねた家具や時計、色とりどりのオルゴールが静かに並んでいました。女性が小さな違和感に足を止めるたび、男性はそっと近づき、二人で答えを探していきます。見守るように蝶たちが数を増やし、二つ目の部屋へ導きました。",
+    puzzleTitle: "謎解き②",
     question: "テスト２",
     answer: "２",
-    explanation: "サンプル問題２の答えは「２」でした。",
+    explanation: "二つ目の旋律が戻ると、長い間止まっていた大時計の針が静かに一歩だけ進みました。窓から差し込む光は少し暖かくなり、館全体が柔らかな空気に包まれていきます。",
     restoredPiece: 2,
-    restoredText: "第二の断片"
+    restoredText: "第二の旋律"
   },
   {
     type: "puzzle",
     id: 3,
-    leftTitle: "第三の断片",
-    story: "古い楽譜の線の間に、三つ目の断片がそっと挟まっていました。",
-    puzzleTitle: "第三の謎",
+    leftTitle: "Crescendo ― だんだん強く ―",
+    story: "蝶に導かれた先には、小さな温室がありました。色とりどりの花が咲き誇るその場所で、羽を閉じた金色の蝶が静かに佇んでいます。百年前から待ち続けていた想いを知った二人の前で、失われた三つ目の旋律が柔らかな光を放ち始めました。",
+    puzzleTitle: "謎解き③",
     question: "テスト３",
     answer: "３",
-    explanation: "サンプル問題３の答えは「３」でした。",
+    explanation: "三つ目の旋律が戻ると、館中の蝶たちが一斉に舞い上がりました。止まっていたオルゴールは、短い旋律を奏で始めます。あと一つ。最後の旋律が戻れば、百年待ち続けた演奏会が始まります。",
     restoredPiece: 3,
-    restoredText: "第三の断片"
+    restoredText: "第三の旋律"
   },
   {
     type: "puzzle",
     id: 4,
-    leftTitle: "第四の断片",
-    story: "最後の紙片は、封蝋の裏側に静かに隠されていました。",
-    puzzleTitle: "第四の謎",
+    leftTitle: "Encore ― アンコール ―",
+    story: "蝶たちが二人を導いた先には、大きなオルゴールが置かれた大広間がありました。館中の蝶がその場所へ集まっています。けれど、最後の旋律だけがまだ欠けたままでした。二人は穏やかに微笑み、最後の旋律へ手を伸ばします。",
+    puzzleTitle: "謎解き④",
     question: "テスト４",
     answer: "４",
-    explanation: "サンプル問題４の答えは「４」でした。",
+    explanation: "最後の旋律が戻った瞬間、館いっぱいに美しい音楽が響き渡りました。百年眠り続けていたオルゴールは、待ち続けた想いを解き放つように、優しく、温かく歌い始めます。",
     restoredPiece: 4,
-    restoredText: "第四の断片"
+    restoredText: "最後の旋律"
   },
   {
     type: "ending",
-    title: "復元された招待状",
-    text: "人生は謎解きによく似ています。\n\n一人では解けない問題も、\n誰かとなら答えに辿り着ける。\n\n今日ここに集まってくださった皆さまのおかげで、\n私たちはここまで歩んでくることができました。\n\nそしてこれからも、\n二人で新しい謎を解き続けていきます。\n\n本日はご列席いただき、\n誠にありがとうございました。"
+    title: "祝福の演奏会",
+    text: "おめでとうございます。\n\nあなたのおかげで、\n百年眠っていた祝福の演奏会は、\n再び始まりました。\n\n蝶たちは館を飛び立ちます。\n森を越え、空を越え、\n新しい物語が始まる場所へ。\n\nこの館の物語は、ここで終わるものではありません。\n最後のページを閉じたその瞬間から、\nその続きを歩むのは――\nあなたです。\n\n今日、新たな人生という物語を歩み始める二人へ。\nどうか皆様の祝福を、あたたかな拍手に乗せて届けてください。\n\n幸せを運ぶ蝶たちは、\nその想いをきっと未来へ運んでくれるでしょう。"
   }
 ];
 
@@ -123,7 +123,7 @@ function renderPage() {
 
   document.body.dataset.pageType = page.type;
   pageCount.textContent = `${state.currentPageIndex + 1} / ${runtimePages.length} ページ`;
-  restoreCount.textContent = `復元 ${restoredTotal} / ${puzzleTotal}`;
+  restoreCount.textContent = `旋律 ${restoredTotal} / ${puzzleTotal}`;
 
   book.classList.remove("is-turning");
   void book.offsetWidth;
@@ -162,10 +162,10 @@ function renderCoverPage(page) {
         <div class="cover-inner">
           <div class="envelope-mark" aria-hidden="true"></div>
           <div class="seal" aria-hidden="true">封</div>
-          <p class="eyebrow">A Hidden Invitation</p>
+          <p class="eyebrow">Blessing Manor</p>
           <h1>${escapeHtml(page.title)}</h1>
           <p class="lead">${escapeHtml(page.text)}</p>
-          <button class="primary-button" type="button" data-action="open-book">招待状を開く</button>
+          <button class="primary-button" type="button" data-action="open-book">祝福の館へ入る</button>
         </div>
       </article>
     </div>
@@ -201,9 +201,9 @@ function renderRestorePage(page) {
     <div class="book-spread">
       <article class="page restore-card">
         <div>
-          <div class="paper-fragment">${escapeHtml(page.restoredText || "招待状の断片")}</div>
+          <div class="paper-fragment">${escapeHtml(page.restoredText || "旋律の欠片")}</div>
           <p class="eyebrow">Restored</p>
-          <h2>断片が復元されました</h2>
+          <h2>旋律が戻りました</h2>
           <p class="explanation-text">${escapeHtml(page.explanation)}</p>
           <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
         </div>
@@ -216,14 +216,14 @@ function renderEndingPage(page) {
   return `
     <div class="book-spread">
       <article class="page">
-        <p class="eyebrow">Completed Invitation</p>
+        <p class="eyebrow">Completed Melody</p>
         <h2>${escapeHtml(page.title)}</h2>
         ${renderInvitationPreview(true)}
       </article>
       <article class="page">
         <p class="eyebrow">Final Message</p>
         <p class="ending-text">${escapeHtml(page.text)}</p>
-        <button class="secondary-button" type="button" data-action="restart">最初から読む</button>
+        <button class="secondary-button" type="button" data-action="restart">もう一度、館を訪れる</button>
       </article>
     </div>
   `;
@@ -238,7 +238,7 @@ function renderSealedPage() {
           <p class="eyebrow">Sealed Page</p>
           <h2>封印されています</h2>
           <p class="lead">このページは、前の謎を解くと開放されます。</p>
-          <button class="secondary-button" type="button" data-action="back-to-unlocked">開いているページへ戻る</button>
+          <button class="secondary-button" type="button" data-action="back-to-unlocked">開いている扉へ戻る</button>
         </div>
       </article>
     </div>
@@ -249,16 +249,16 @@ function renderInvitationPreview(isComplete = false) {
   const puzzlePages = pages.filter((item) => item.type === "puzzle");
   const pieces = puzzlePages.map((puzzle) => {
     const restored = isComplete || state.restoredPieces.includes(puzzle.restoredPiece);
-    const label = restored ? puzzle.restoredText : "欠けた断片";
+    const label = restored ? puzzle.restoredText : "失われた旋律";
 
     return `<div class="invitation-piece ${restored ? "is-restored" : ""}">${escapeHtml(label)}</div>`;
   });
 
   if (isComplete) {
-    pieces.push('<div class="invitation-piece is-restored">本日はご列席いただき、誠にありがとうございます。</div>');
+    pieces.push('<div class="invitation-piece is-restored">祝福の演奏会が再び始まりました。</div>');
   }
 
-  return `<div class="invitation-preview" aria-label="復元中の招待状">${pieces.join("")}</div>`;
+  return `<div class="invitation-preview" aria-label="復元中のオルゴール">${pieces.join("")}</div>`;
 }
 
 function bindCommonActions() {
@@ -323,7 +323,7 @@ function bindPuzzleForm(page) {
       return;
     }
 
-    errorMessage.textContent = "まだ違うようです。招待状の断片をもう一度見直してみましょう。";
+    errorMessage.textContent = "まだ違うようです。蝶が示した手がかりをもう一度見直してみましょう。";
     input.select();
   });
 
