@@ -85,20 +85,34 @@ const pages = [
   },
   {
     type: "story",
-    title: "Epilogue ― 祝福の館からの贈り物 ―",
-    text: "最後の旋律が響き終えると、\n\n白い蝶は静かに羽ばたき、\n完成したオルゴールのまわりを一度だけ巡りました。\n\nやがて蝶は一枚の手紙をくわえ、\nあなたのもとへそっと届けます。\n\nそこに綴られていたのは、\n祝福の館からの言葉ではありませんでした。\n\n**本日は、私たちの結婚式へお越しいただき、本当にありがとうございます。**\n\n皆さまが集めてくださった四つの旋律は、\nこの物語だけのものではありません。\n\n今日この日、\n私たちへ届けてくださった祝福そのものです。\n\n一問一問考えてくださったこと。\n\n笑い合いながら謎を解いてくださったこと。\n\nその時間すべてが、\n私たちにとって何より大切な贈り物になりました。\n\nこれから先、\n嬉しい日も、悩む日もあると思います。\n\nそんな時は今日響いたこの音色を思い出し、\n二人で歩んでいきます。\n\nどうかこれからも、\n変わらぬ温かさで見守っていただけたら幸いです。\n\n白い蝶はもう一度だけ大きく羽ばたき、\n祝福の館をあとにしました。\n\nその羽は森を越え、\n今日という特別な場所へ舞い戻ります。\n\nオルゴールの音色は、\nもう館だけに響くものではありません。\n\n皆さまの祝福とともに、\nこれから始まる私たちの人生へ、\nいつまでも優しく寄り添い続けます。\n\n**本日は、本当にありがとうございました。**",
-    image: "assets/images/story-ending.png",
-    imageAlt: "完成したオルゴールと白い蝶",
-    imageFirst: true,
-    buttonText: "祝福を届ける",
+    title: "Epilogue 1 ― 手紙のはじまり ―",
+    text: "白い蝶が、そっと一枚の手紙を\nあなたのもとへ運んできました。\n\nその封を開くと、\nそこに綴られていたのは――\n\n祝福の館からの言葉ではありませんでした。",
+    buttonText: "次のページへ",
     ambientAudioKey: "ending",
     variant: "epilogue",
     preventSplit: true
   },
   {
-    type: "ending",
-    title: "祝福の演奏会",
-    text: "この館の物語は、ここで終わるものではありません。\n\n最後のページを閉じた瞬間から、その続きを歩むのは――\n\n**あなたです。**\n\n今日、新たな人生を歩み始める二人へ。\n\nどうか皆様の祝福を、あたたかな拍手に乗せて届けてください。\n\n幸せを運ぶ蝶たちは、その想いを未来へ運んでくれるでしょう。"
+    type: "story",
+    title: "Epilogue 2 ― 感謝の気持ちを込めて ―",
+    text: "[[ending-letter]]",
+    buttonText: "次のページへ",
+    ambientAudioKey: "ending",
+    variant: "epilogue",
+    preventSplit: true
+  },
+  {
+    type: "story",
+    title: "Epilogue 3 ― これからの二人へ祝福を ―",
+    text: "オルゴールの音色は、\nもう館だけに響くものではありません。\n\n皆さまの祝福とともに、\nこれから始まる私たちの人生へ、\nいつまでも優しく寄り添い続けます。\n\n**本日は、本当にありがとうございました。**",
+    image: "assets/images/story-ending.png",
+    imageAlt: "祝福の光に包まれたオルゴール",
+    imageFirst: true,
+    buttonText: "披露宴へ戻る",
+    ambientAudioKey: "ending",
+    variant: "epilogue epilogue-final",
+    finalPage: true,
+    preventSplit: true
   }
 ];
 
@@ -329,15 +343,20 @@ function renderStoryPage(page) {
   const previousButton = renderPreviousButton();
   const themeClass = getPageTheme(page);
   const imageClass = page.image ? " has-story-image" : "";
-  const storyText = page.text ? `<div class="story-body">${formatStoryText(page.text)}</div>` : "";
+  const storyText = page.text ? `<div class="story-body">${formatStoryText(page.text, page)}</div>` : "";
   const storyImage = page.image ? renderStoryImage(page) : "";
   const storyContent = page.imageFirst
     ? [storyImage, storyText].join("")
     : [storyText, storyImage].join("");
-  const pageClass = ["page", "story-page", "room-page", imageClass.trim(), page.variant ? `is-${page.variant}` : ""]
+  const variantClasses = page.variant
+    ? page.variant.split(/\s+/).filter(Boolean).map((variant) => `is-${variant}`)
+    : [];
+  const pageClass = ["page", "story-page", "room-page", imageClass.trim(), ...variantClasses]
     .filter(Boolean)
     .join(" ");
   const nextButtonText = page.buttonText || "次のページへ";
+  const buttonAction = page.finalPage ? "restart" : "next-page";
+  const buttonClass = page.finalPage ? "secondary-button" : "primary-button";
 
   return `
     <div class="book-spread story-spread ${themeClass}">
@@ -349,7 +368,7 @@ function renderStoryPage(page) {
         ${storyContent}
         <div class="page-actions">
           ${previousButton}
-          <button class="primary-button" type="button" data-action="next-page">${escapeHtml(nextButtonText)}</button>
+          <button class="${buttonClass}" type="button" data-action="${buttonAction}">${escapeHtml(nextButtonText)}</button>
         </div>
       </article>
       <article class="page room-visual-page" aria-hidden="true">
@@ -370,6 +389,14 @@ function renderStoryImage(page) {
   return `
     <figure class="story-image-frame ${imageClass}">
       <img src="${escapeHtml(page.image)}" alt="${escapeHtml(page.imageAlt || page.title)}" onerror="this.closest('figure').classList.add('is-missing-image'); this.remove();">
+    </figure>
+  `;
+}
+
+function renderEndingLetterFrame() {
+  return `
+    <figure class="ending-letter-frame">
+      <img src="assets/images/ending_letter.png" alt="新郎新婦から皆さまへのメッセージ" onerror="this.closest('figure').classList.add('is-missing-image'); this.remove();">
     </figure>
   `;
 }
@@ -450,7 +477,7 @@ function renderEndingPage(page) {
         ${renderPaperEffects()}
         ${renderRoomDecor(themeClass)}
         <p class="eyebrow">Final Message</p>
-        <div class="ending-text">${formatStoryText(page.text)}</div>
+        ${renderEndingLetterFrame()}
         <div class="page-actions">
           ${previousButton}
           <button class="secondary-button" type="button" data-action="restart">もう一度、館を訪れる</button>
@@ -504,6 +531,10 @@ function renderAnimatedTitle(title) {
 function getPageTheme(page) {
   if (!page) {
     return "theme-prelude";
+  }
+
+  if (page.variant?.includes("epilogue")) {
+    return "theme-finale";
   }
 
   if (page.id === 1 || page.sourceId === 1) {
@@ -866,7 +897,7 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
-function formatStoryText(value) {
+function formatStoryText(value, page = {}) {
   return String(value)
     .split(/\n{2,}/)
     .map((block) => {
@@ -874,6 +905,10 @@ function formatStoryText(value) {
 
       if (!trimmed) {
         return "";
+      }
+
+      if (page.variant === "epilogue" && trimmed === "[[ending-letter]]") {
+        return renderEndingLetterFrame();
       }
 
       if (trimmed.startsWith(">")) {
