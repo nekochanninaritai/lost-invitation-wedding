@@ -10,7 +10,7 @@ const pages = [
     text: "深い森の奥。\n\n小道を進むと、古い洋館が姿を現しました。\n\nその館の名は――\n祝福の館。\n\n今日だけ、ゲストを迎え入れる不思議な館です。\n\n扉の前で、白い蝶がふわりと舞いました。\n\n中へ入ると、広間の中央に大きなオルゴールがあります。けれど、その箱はまだ静かなまま。\n\nそばの手紙には、こう記されていました。",
     chunkImages: {
       1: {
-        image: "assets/images/letter.png",
+        image: "assets/images/letter.png?v=20260629-letter",
         imageAlt: "祝福の館からの手紙"
       }
     }
