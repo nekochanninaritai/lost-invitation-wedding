@@ -1207,6 +1207,48 @@ h3 {
   max-height: min(43.5dvh, 420px);
 }
 
+.story-image-frame.is-epilogue-image {
+  width: min(100%, 640px);
+  margin-top: 24px;
+  margin-bottom: 26px;
+  min-height: clamp(220px, 42dvh, 420px);
+  overflow: hidden;
+}
+
+.story-image-frame.is-epilogue-image img {
+  max-height: min(48dvh, 460px);
+}
+
+.story-image-frame.is-missing-image::before {
+  display: grid;
+  width: 100%;
+  min-height: clamp(220px, 38dvh, 420px);
+  place-items: center;
+  color: rgba(95, 68, 50, 0.78);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 26% 24%, rgba(255, 248, 222, 0.78), transparent 7rem),
+    radial-gradient(circle at 72% 28%, rgba(228, 199, 114, 0.28), transparent 8rem),
+    radial-gradient(circle at 64% 74%, rgba(207, 167, 160, 0.16), transparent 9rem),
+    linear-gradient(135deg, rgba(255, 250, 240, 0.92), rgba(232, 211, 178, 0.52));
+  content: "完成したオルゴールと白い蝶";
+  font-family: "Noto Serif JP", "Yu Mincho", serif;
+  font-size: clamp(1rem, 4vw, 1.45rem);
+  letter-spacing: 0.08em;
+}
+
+.story-page.is-epilogue .story-image-frame {
+  opacity: 0;
+  animation: epilogueImageIn 1s ease-out 120ms forwards;
+}
+
+.story-page.is-epilogue .story-body,
+.story-page.is-epilogue .page-actions {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: epilogueTextIn 500ms ease-out 820ms forwards;
+}
+
 .story-body p,
 .ending-text p,
 .explanation-text p {
@@ -2113,6 +2155,25 @@ body[data-page-type="ending"] .ending-text {
   }
 }
 
+@keyframes epilogueImageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes epilogueTextIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 520px) {
   html,
   body {
@@ -2240,6 +2301,14 @@ body[data-page-type="ending"] .ending-text {
 
   .story-image-frame.is-letter-image img {
     max-height: min(37.5dvh, calc((100dvh - 380px) * 0.75));
+  }
+
+  .story-image-frame.is-epilogue-image {
+    min-height: clamp(180px, 32dvh, 300px);
+  }
+
+  .story-image-frame.is-epilogue-image img {
+    max-height: min(34dvh, 320px);
   }
 
   .story-page.has-story-image .page-actions {

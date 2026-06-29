@@ -84,6 +84,18 @@ const pages = [
     restoredText: "最後の旋律"
   },
   {
+    type: "story",
+    title: "Epilogue ― 祝福の館からの贈り物 ―",
+    text: "最後の旋律が響き終えると、\n\n白い蝶は静かに羽ばたき、\n完成したオルゴールのまわりを一度だけ巡りました。\n\nやがて蝶は一枚の手紙をくわえ、\nあなたのもとへそっと届けます。\n\nそこに綴られていたのは、\n祝福の館からの言葉ではありませんでした。\n\n**本日は、私たちの結婚式へお越しいただき、本当にありがとうございます。**\n\n皆さまが集めてくださった四つの旋律は、\nこの物語だけのものではありません。\n\n今日この日、\n私たちへ届けてくださった祝福そのものです。\n\n一問一問考えてくださったこと。\n\n笑い合いながら謎を解いてくださったこと。\n\nその時間すべてが、\n私たちにとって何より大切な贈り物になりました。\n\nこれから先、\n嬉しい日も、悩む日もあると思います。\n\nそんな時は今日響いたこの音色を思い出し、\n二人で歩んでいきます。\n\nどうかこれからも、\n変わらぬ温かさで見守っていただけたら幸いです。\n\n白い蝶はもう一度だけ大きく羽ばたき、\n祝福の館をあとにしました。\n\nその羽は森を越え、\n今日という特別な場所へ舞い戻ります。\n\nオルゴールの音色は、\nもう館だけに響くものではありません。\n\n皆さまの祝福とともに、\nこれから始まる私たちの人生へ、\nいつまでも優しく寄り添い続けます。\n\n**本日は、本当にありがとうございました。**",
+    image: "assets/images/story-ending.png",
+    imageAlt: "完成したオルゴールと白い蝶",
+    imageFirst: true,
+    buttonText: "祝福を届ける",
+    ambientAudioKey: "ending",
+    variant: "epilogue",
+    preventSplit: true
+  },
+  {
     type: "ending",
     title: "祝福の演奏会",
     text: "この館の物語は、ここで終わるものではありません。\n\n最後のページを閉じた瞬間から、その続きを歩むのは――\n\n**あなたです。**\n\n今日、新たな人生を歩み始める二人へ。\n\nどうか皆様の祝福を、あたたかな拍手に乗せて届けてください。\n\n幸せを運ぶ蝶たちは、その想いを未来へ運んでくれるでしょう。"
@@ -317,14 +329,19 @@ function renderStoryPage(page) {
   const previousButton = renderPreviousButton();
   const themeClass = getPageTheme(page);
   const imageClass = page.image ? " has-story-image" : "";
-  const storyContent = [
-    page.text ? `<div class="story-body">${formatStoryText(page.text)}</div>` : "",
-    page.image ? renderStoryImage(page) : ""
-  ].join("");
+  const storyText = page.text ? `<div class="story-body">${formatStoryText(page.text)}</div>` : "";
+  const storyImage = page.image ? renderStoryImage(page) : "";
+  const storyContent = page.imageFirst
+    ? [storyImage, storyText].join("")
+    : [storyText, storyImage].join("");
+  const pageClass = ["page", "story-page", "room-page", imageClass.trim(), page.variant ? `is-${page.variant}` : ""]
+    .filter(Boolean)
+    .join(" ");
+  const nextButtonText = page.buttonText || "次のページへ";
 
   return `
     <div class="book-spread story-spread ${themeClass}">
-      <article class="page story-page room-page${imageClass}">
+      <article class="${pageClass}">
         ${renderPaperEffects()}
         ${renderRoomDecor(themeClass)}
         <p class="eyebrow">Story</p>
@@ -332,7 +349,7 @@ function renderStoryPage(page) {
         ${storyContent}
         <div class="page-actions">
           ${previousButton}
-          <button class="primary-button" type="button" data-action="next-page">次のページへ</button>
+          <button class="primary-button" type="button" data-action="next-page">${escapeHtml(nextButtonText)}</button>
         </div>
       </article>
       <article class="page room-visual-page" aria-hidden="true">
@@ -345,11 +362,14 @@ function renderStoryPage(page) {
 }
 
 function renderStoryImage(page) {
-  const imageClass = page.image?.includes("letter.png") ? " is-letter-image" : "";
+  const imageClass = [
+    page.image?.includes("letter.png") ? "is-letter-image" : "",
+    page.variant === "epilogue" ? "is-epilogue-image" : ""
+  ].filter(Boolean).join(" ");
 
   return `
-    <figure class="story-image-frame${imageClass}">
-      <img src="${escapeHtml(page.image)}" alt="${escapeHtml(page.imageAlt || page.title)}">
+    <figure class="story-image-frame ${imageClass}">
+      <img src="${escapeHtml(page.image)}" alt="${escapeHtml(page.imageAlt || page.title)}" onerror="this.closest('figure').classList.add('is-missing-image'); this.remove();">
     </figure>
   `;
 }
@@ -751,6 +771,10 @@ function restorePiece(pieceId) {
 
 function buildRuntimePages(sourcePages) {
   return sourcePages.flatMap((page) => {
+    if (page.preventSplit) {
+      return [page];
+    }
+
     if (page.type === "story") {
       return splitTextPage(page, "text", 6);
     }
@@ -1092,6 +1116,10 @@ function fadeAudioIn(audio, targetVolume, duration) {
 }
 
 function getAmbientAudioKey(page) {
+  if (page.ambientAudioKey) {
+    return page.ambientAudioKey;
+  }
+
   if (page.type === "ending") {
     return "ending";
   }
