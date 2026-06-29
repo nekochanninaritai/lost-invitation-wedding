@@ -95,6 +95,23 @@ const runtimePages = buildRuntimePages(pages);
 const book = document.getElementById("book");
 const pageCount = document.getElementById("page-count");
 const restoreCount = document.getElementById("restore-count");
+const musicboxGauge = document.getElementById("musicbox-gauge");
+const audioStartButton = document.getElementById("audio-start");
+const audioToggleButton = document.getElementById("audio-toggle");
+
+const audioPaths = {
+  intro: "assets/audio/musicbox_intro.mp3",
+  click: "assets/audio/click.mp3",
+  correct: "assets/audio/correct.mp3",
+  wrong: "assets/audio/wrong.mp3",
+  ending: "assets/audio/ending_musicbox.mp3"
+};
+
+const audioState = {
+  enabled: false,
+  endingStarted: false,
+  endingAudio: null
+};
 
 const state = loadProgress();
 state.currentPageIndex = 0;
@@ -154,6 +171,7 @@ function renderPage() {
   document.body.dataset.pageType = page.type;
   pageCount.textContent = `${state.currentPageIndex + 1} / ${runtimePages.length} ページ`;
   restoreCount.textContent = `旋律 ${restoredTotal} / ${puzzleTotal}`;
+  renderMusicboxGauge(restoredTotal, puzzleTotal);
 
   book.classList.remove("is-turning");
   void book.offsetWidth;
@@ -187,6 +205,7 @@ function renderPage() {
 
   bindCommonActions();
   bindPuzzleForm(page);
+  updateAmbientAudio(page);
 }
 
 function renderCoverPage(page) {
@@ -326,6 +345,15 @@ function renderInvitationPreview(isComplete = false) {
   return `<div class="invitation-preview" aria-label="復元中のオルゴール">${pieces.join("")}</div>`;
 }
 
+function renderMusicboxGauge(restoredTotal, puzzleTotal) {
+  musicboxGauge.classList.toggle("is-complete", restoredTotal === puzzleTotal);
+  musicboxGauge.innerHTML = Array.from({ length: puzzleTotal }, (_, index) => {
+    const filled = index < restoredTotal;
+    return `<span class="gauge-dot ${filled ? "is-filled" : ""}" aria-hidden="true"></span>`;
+  }).join("");
+  musicboxGauge.setAttribute("aria-label", `オルゴール ${restoredTotal} / ${puzzleTotal}`);
+}
+
 function renderPreviousButton() {
   if (state.currentPageIndex <= 0) {
     return "";
@@ -343,6 +371,7 @@ function bindCommonActions() {
 
   if (openBookButton) {
     openBookButton.addEventListener("click", () => {
+      playSound("click");
       unlockPage(1);
       setPage(1);
     });
@@ -350,6 +379,7 @@ function bindCommonActions() {
 
   if (nextPageButton) {
     nextPageButton.addEventListener("click", () => {
+      playSound("click");
       unlockPage(state.currentPageIndex + 1);
       setPage(state.currentPageIndex + 1);
     });
@@ -357,12 +387,14 @@ function bindCommonActions() {
 
   if (previousPageButton) {
     previousPageButton.addEventListener("click", () => {
+      playSound("click");
       setPage(state.currentPageIndex - 1);
     });
   }
 
   if (restartButton) {
     restartButton.addEventListener("click", () => {
+      playSound("click");
       state.currentPageIndex = 0;
       state.unlockedPageIndex = 0;
       state.restoredPieces = [];
@@ -372,7 +404,10 @@ function bindCommonActions() {
   }
 
   if (backButton) {
-    backButton.addEventListener("click", () => setPage(state.unlockedPageIndex));
+    backButton.addEventListener("click", () => {
+      playSound("click");
+      setPage(state.unlockedPageIndex);
+    });
   }
 }
 
@@ -397,12 +432,17 @@ function bindPuzzleForm(page) {
     event.preventDefault();
 
     if (isCorrectAnswer(input.value, page)) {
+      playSound("correct");
       restorePiece(page.restoredPiece);
       unlockPage(state.currentPageIndex + 1);
       setPage(state.currentPageIndex + 1);
       return;
     }
 
+    playSound("wrong");
+    input.classList.remove("is-wrong");
+    void input.offsetWidth;
+    input.classList.add("is-wrong");
     errorMessage.textContent = "まだ違うようです。蝶が示した手がかりをもう一度見直してみましょう。";
     input.select();
   });
@@ -496,4 +536,73 @@ function formatInlineText(value) {
   return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 }
 
+function setupAudioControls() {
+  audioStartButton.addEventListener("click", () => {
+    setAudioEnabled(true);
+    playSound("intro");
+  });
+
+  audioToggleButton.addEventListener("click", () => {
+    setAudioEnabled(!audioState.enabled);
+    playSound("click");
+  });
+}
+
+function setAudioEnabled(enabled) {
+  audioState.enabled = enabled;
+  document.body.classList.toggle("is-audio-enabled", enabled);
+  audioStartButton.hidden = enabled;
+  audioToggleButton.textContent = enabled ? "音 ON" : "音 OFF";
+  audioToggleButton.setAttribute("aria-pressed", String(enabled));
+
+  if (!enabled && audioState.endingAudio) {
+    audioState.endingAudio.pause();
+  }
+
+  updateAmbientAudio(runtimePages[state.currentPageIndex]);
+}
+
+function playSound(name) {
+  if (!audioState.enabled) {
+    return;
+  }
+
+  const path = audioPaths[name];
+
+  if (!path) {
+    return;
+  }
+
+  const audio = new Audio(path);
+  audio.volume = name === "ending" ? 0.35 : 0.55;
+  audio.play().catch(() => {});
+}
+
+function updateAmbientAudio(page) {
+  if (!audioState.enabled) {
+    return;
+  }
+
+  if (page.type !== "ending") {
+    if (audioState.endingAudio) {
+      audioState.endingAudio.pause();
+      audioState.endingAudio.currentTime = 0;
+      audioState.endingStarted = false;
+    }
+    return;
+  }
+
+  if (!audioState.endingAudio) {
+    audioState.endingAudio = new Audio(audioPaths.ending);
+    audioState.endingAudio.loop = true;
+    audioState.endingAudio.volume = 0.32;
+  }
+
+  if (!audioState.endingStarted) {
+    audioState.endingStarted = true;
+    audioState.endingAudio.play().catch(() => {});
+  }
+}
+
+setupAudioControls();
 renderPage();
