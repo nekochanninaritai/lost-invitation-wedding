@@ -107,6 +107,10 @@ const audioPaths = {
   ending: "assets/audio/ending_musicbox.mp3"
 };
 
+const imagePaths = {
+  butterfly: "assets/images/butterfly_gold.png"
+};
+
 const audioState = {
   enabled: false,
   endingStarted: false,
@@ -116,6 +120,8 @@ const audioState = {
 const state = loadProgress();
 state.currentPageIndex = 0;
 state.unlockedPageIndex = clampPageIndex(state.unlockedPageIndex);
+
+detectOptionalImages();
 
 function loadProgress() {
   const saved = localStorage.getItem(STORAGE_KEY);
@@ -206,6 +212,14 @@ function renderPage() {
   bindCommonActions();
   bindPuzzleForm(page);
   updateAmbientAudio(page);
+}
+
+function detectOptionalImages() {
+  const image = new Image();
+  image.onload = () => {
+    document.body.classList.add("has-butterfly-image");
+  };
+  image.src = imagePaths.butterfly;
 }
 
 function renderCoverPage(page) {

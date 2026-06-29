@@ -158,6 +158,11 @@ button {
   animation: flutterButterfly 14s ease-in-out infinite;
 }
 
+body.has-butterfly-image .butterfly {
+  background: url("assets/images/butterfly_gold.png?v=20260629-assets") center / contain no-repeat;
+  filter: drop-shadow(0 0 14px rgba(228, 199, 114, 0.32));
+}
+
 .butterfly::before,
 .butterfly::after {
   position: absolute;
@@ -185,6 +190,11 @@ button {
   border-radius: 34% 82% 28% 72%;
   transform: translateY(-50%) rotate(24deg);
   transform-origin: left center;
+}
+
+body.has-butterfly-image .butterfly::before,
+body.has-butterfly-image .butterfly::after {
+  display: none;
 }
 
 .note-1 {
