@@ -26,8 +26,10 @@ const pages = [
     leftTitle: "第一章 Prelude ― 前奏 ―",
     story: "扉の先は、小さな応接間でした。\n\n古い招待状、封蝋の手紙、色あせた楽譜。どれも今日の来訪者を待っていたようです。\n\n机の上には、欠けた招待状の一部。\n白い蝶が止まると、紙面に光が灯ります。\n\nここから始まるのは、二人へ贈る一曲を完成させる旅。\n\n余白に、最初の謎が浮かびました。",
     puzzleTitle: "謎解き①",
-    question: "ふたりが大切にしている言葉です。『ありがとう』の気持ちを、今日という日に一番届けたい相手は誰でしょう？",
-    answer: "みなさま",
+    question: "蝶は迷路の中を飛びながら、いくつかの文字を通り過ぎました。\n\nSからGまでたどり、通り道にある文字を順番どおりにつなげてください。",
+    questionImage: "assets/question1.png",
+    questionImageAlt: "蝶が通る迷路の問題画像",
+    answer: "ブーケ",
     explanation: "答えを告げると、白い蝶が羽を広げました。\n\n紙片が招待状にはまり、金色の線が走ります。\n\nオルゴールの奥で、澄んだ一音が鳴りました。\n\n蝶は次の廊下へ飛んでいきます。",
     restoredPiece: 1,
     restoredText: "第一の旋律"
@@ -445,7 +447,8 @@ function renderPuzzlePage(page) {
         ${renderRoomVisual(themeClass)}
         <p class="eyebrow">Question</p>
         <h3>${escapeHtml(page.puzzleTitle)}</h3>
-        <p class="question-text">${escapeHtml(page.question)}</p>
+        <div class="question-text">${formatStoryText(page.question)}</div>
+        ${renderQuestionImage(page)}
         <form class="answer-form" id="answer-form">
           <label for="answer-input">答え</label>
           <input id="answer-input" type="text" autocomplete="off" inputmode="text" placeholder="答えを入力">
@@ -455,6 +458,18 @@ function renderPuzzlePage(page) {
         ${previousButton}
       </article>
     </div>
+  `;
+}
+
+function renderQuestionImage(page) {
+  if (!page.questionImage) {
+    return "";
+  }
+
+  return `
+    <figure class="question-image-frame">
+      <img src="${escapeHtml(page.questionImage)}" alt="${escapeHtml(page.questionImageAlt || page.puzzleTitle)}" loading="lazy">
+    </figure>
   `;
 }
 

@@ -1163,6 +1163,31 @@ h3 {
   margin: 20px 0 0;
 }
 
+.question-image-frame {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: min(100%, 520px);
+  margin: 18px auto 22px;
+  padding: 10px;
+  place-items: center;
+  border: 1px solid rgba(185, 154, 99, 0.48);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 240, 0.82), rgba(232, 211, 178, 0.38));
+  box-shadow:
+    0 0 0 1px rgba(255, 250, 240, 0.58) inset,
+    0 14px 26px rgba(72, 49, 31, 0.12);
+}
+
+.question-image-frame img {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border-radius: 7px;
+}
+
 .story-spread {
   grid-template-columns: 1fr;
 }
@@ -2547,6 +2572,16 @@ body[data-page-type="ending"] .ending-text {
 
   .story-image-frame img {
     max-height: calc(100dvh - 260px);
+  }
+
+  .question-image-frame {
+    width: 100%;
+    margin: 14px auto 18px;
+    padding: 8px;
+  }
+
+  .question-image-frame img {
+    max-width: 100%;
   }
 
   .ending-letter-frame {
