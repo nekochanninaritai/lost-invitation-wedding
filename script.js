@@ -304,6 +304,7 @@ function renderPage() {
   bindCommonActions();
   bindPuzzleForm(page);
   updateAmbientAudio(page);
+  bindMediaOverflowUpdates();
   schedulePageOverflowUpdate();
 }
 
@@ -323,6 +324,33 @@ function updatePageOverflow() {
   document.querySelectorAll(".page").forEach((pageElement) => {
     const hasOverflow = pageElement.scrollHeight > pageElement.clientHeight + 2;
     pageElement.classList.toggle("is-scrollable", hasOverflow);
+  });
+}
+
+function bindMediaOverflowUpdates() {
+  const updateAfterLayout = () => {
+    schedulePageOverflowUpdate();
+    window.setTimeout(schedulePageOverflowUpdate, 120);
+  };
+
+  book.querySelectorAll("img").forEach((image) => {
+    if (image.complete) {
+      updateAfterLayout();
+      return;
+    }
+
+    image.addEventListener("load", updateAfterLayout, { once: true });
+    image.addEventListener("error", updateAfterLayout, { once: true });
+  });
+
+  book.querySelectorAll("video").forEach((video) => {
+    if (video.readyState >= 1) {
+      updateAfterLayout();
+      return;
+    }
+
+    video.addEventListener("loadedmetadata", updateAfterLayout, { once: true });
+    video.addEventListener("error", updateAfterLayout, { once: true });
   });
 }
 
