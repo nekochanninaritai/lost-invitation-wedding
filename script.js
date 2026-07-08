@@ -45,8 +45,10 @@ const pages = [
     leftTitle: "第二章 Cantabile ― 歌うように ―",
     story: "扉には小さな鍵穴。\n\nその横に、二つ目の謎が刻まれていました。\n\n過ぎてきた時間も、これから歩む時間も。\nすべてが、今日の一音につながっています。\n\n扉の向こうで、時計の針が動き出すのを待っています。",
     puzzleTitle: "謎解き②",
-    question: "テスト２",
-    answer: "２",
+    question: "画像の中に隠された手がかりを読み解き、導かれる言葉を答えてください。",
+    questionImage: "assets/question2.png",
+    questionImageAlt: "第二章の謎解き画像",
+    answer: "ドレス",
     explanation: "答えが届くと、時計が静かに音を立てました。\n\nこちり、と針が進みます。\n\n止まっていた時が、少しずつ動き出しました。\n\n廊下の奥から、温かな光が差し込みます。",
     restoredPiece: 2,
     restoredText: "第二の旋律"
