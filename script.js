@@ -808,8 +808,13 @@ function bindPuzzleForm(page) {
     saveProgress();
   });
 
+  input.addEventListener("blur", () => {
+    normalizeVisibleAnswer(input, answerKey);
+  });
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    normalizeVisibleAnswer(input, answerKey);
 
     if (isCorrectAnswer(input.value, page)) {
       const nextPageIndex = state.currentPageIndex + 1;
@@ -832,6 +837,17 @@ function bindPuzzleForm(page) {
     input.classList.add("is-wrong");
     errorMessage.textContent = "まだ違うようです。蝶が示した手がかりをもう一度見直してみましょう。";
   });
+}
+
+function normalizeVisibleAnswer(input, answerKey) {
+  const converted = toFullWidthKatakana(input.value);
+
+  if (input.value !== converted) {
+    input.value = converted;
+  }
+
+  state.answers[answerKey] = input.value;
+  saveProgress();
 }
 
 function triggerButtonCue() {
