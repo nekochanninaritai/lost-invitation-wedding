@@ -451,7 +451,7 @@ function renderPuzzlePage(page) {
         ${renderQuestionImage(page)}
         <form class="answer-form" id="answer-form">
           <label for="answer-input">答え</label>
-          <input id="answer-input" type="text" autocomplete="off" inputmode="text" placeholder="答えを入力">
+          <input id="answer-input" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" enterkeyhint="done" placeholder="答えを入力">
           <button class="primary-button" type="submit">回答する</button>
           <p id="error-message" class="error-message" role="alert" aria-live="polite"></p>
         </form>
@@ -804,12 +804,6 @@ function bindPuzzleForm(page) {
   input.value = state.answers[answerKey] || "";
 
   input.addEventListener("input", () => {
-    const converted = toFullWidthKatakana(input.value);
-
-    if (input.value !== converted) {
-      input.value = converted;
-    }
-
     state.answers[answerKey] = input.value;
     saveProgress();
   });
@@ -837,7 +831,6 @@ function bindPuzzleForm(page) {
     void input.offsetWidth;
     input.classList.add("is-wrong");
     errorMessage.textContent = "まだ違うようです。蝶が示した手がかりをもう一度見直してみましょう。";
-    input.select();
   });
 }
 
