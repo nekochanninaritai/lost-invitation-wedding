@@ -65,6 +65,8 @@ const pages = [
     story: "温室の譜面台には、途中までしか書かれていない楽譜。\n\nその余白に、三つ目の謎が浮かびました。\n\n大きな言葉でなくてもかまいません。\n拍手、笑顔、見守るまなざし。\n\nあなたの答えも、二人の未来を照らす小さな光になります。",
     puzzleTitle: "謎解き③",
     question: "テスト３",
+    questionImage: "assets/images/question3.png",
+    questionImageAlt: "第三章の謎解き画像",
     answer: "３",
     explanation: "三つ目の答えが重なると、温室に光が広がりました。\n\n花が開き、蝶たちが舞い上がります。\n\nオルゴールは、短いフレーズを奏で始めました。\n\nあと一つ。\n最後の空白が待っています。",
     restoredPiece: 3,
