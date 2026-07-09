@@ -125,10 +125,18 @@ const pages = [
     title: "Extra Contents",
     subtitle: "祝福の館からの小さな贈り物",
     ambientAudioKey: "ending"
+  },
+  {
+    type: "miracle",
+    title: "蝶の奇跡",
+    ambientAudioKey: "ending"
   }
 ];
 
 const STORAGE_KEY = "lostInvitationProgress";
+const MIRACLE_STORAGE_KEY = "butterflyMiracleRecords";
+const MIRACLE_POLL_INTERVAL_MS = 5000;
+const MIRACLE_MAX_RECORDS = 200;
 
 const runtimePages = buildRuntimePages(pages);
 const book = document.getElementById("book");
@@ -171,6 +179,8 @@ state.unlockedPageIndex = clampPageIndex(state.unlockedPageIndex);
 let pageTurnTimer;
 let pageCueTimer;
 let correctCueTimer;
+let miraclePollTimer;
+let miracleRecordsCache = loadLocalMiracleRecords();
 
 detectOptionalImages();
 
@@ -251,6 +261,7 @@ function renderPage() {
   const restoredTotal = state.restoredPieces.length;
   const puzzleTotal = pages.filter((item) => item.type === "puzzle").length;
 
+  stopMiraclePolling();
   document.body.dataset.pageType = page.type;
   document.body.dataset.roomTheme = themeClass.replace("theme-", "");
   document.body.dataset.awakeLevel = String(Math.min(restoredTotal, puzzleTotal));
@@ -303,8 +314,13 @@ function renderPage() {
     book.innerHTML = renderExtraPage(page);
   }
 
+  if (page.type === "miracle") {
+    book.innerHTML = renderMiraclePage(page);
+  }
+
   bindCommonActions();
   bindPuzzleForm(page);
+  bindMiracleForm(page);
   updateAmbientAudio(page);
   bindMediaOverflowUpdates();
   schedulePageOverflowUpdate();
@@ -578,6 +594,7 @@ function renderExtraPage(page) {
         </div>
         <div class="page-actions">
           ${previousButton}
+          <button class="primary-button" type="button" data-action="next-page">蝶の奇跡へ</button>
           <button class="secondary-button" type="button" data-action="restart">タイトルへ戻る</button>
         </div>
       </article>
@@ -587,6 +604,54 @@ function renderExtraPage(page) {
         ${renderRoomVisual(themeClass)}
       </article>
     </div>
+  `;
+}
+
+function renderMiraclePage(page) {
+  const previousButton = renderPreviousButton();
+  const themeClass = getPageTheme(page);
+
+  return `
+    <div class="book-spread miracle-spread ${themeClass}">
+      <article class="page miracle-page room-page">
+        ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
+        <p class="eyebrow">Extra Contents</p>
+        <h2>${escapeHtml(page.title)}</h2>
+        <div class="story-body miracle-intro">
+          ${formatStoryText("四つの旋律を届けたあなたのもとに、一匹の蝶が舞い降りました。\n\nその羽ばたきは、祝福の館に小さな奇跡として刻まれます。\n\nあなたの名前を、蝶の奇跡として残しますか？")}
+        </div>
+        <form class="miracle-form" id="miracle-form">
+          <label for="miracle-name">ニックネーム</label>
+          <input id="miracle-name" type="text" maxlength="20" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ニックネームを入力">
+          <button class="primary-button" type="submit">奇跡を残す</button>
+          <p id="miracle-error" class="error-message" role="alert" aria-live="polite"></p>
+        </form>
+        ${renderMiracleRecords()}
+        <div class="page-actions">
+          ${previousButton}
+          <button class="secondary-button" type="button" data-action="restart">タイトルへ戻る</button>
+        </div>
+      </article>
+      <article class="page room-visual-page" aria-hidden="true">
+        ${renderPaperEffects()}
+        ${renderRoomDecor(themeClass)}
+        ${renderRoomVisual(themeClass)}
+      </article>
+    </div>
+  `;
+}
+
+function renderMiracleRecords() {
+  const records = miracleRecordsCache;
+
+  return `
+    <section class="miracle-records" aria-labelledby="miracle-records-title">
+      <h3 id="miracle-records-title">蝶の奇跡の記録</h3>
+      ${records.length
+        ? `<ol class="miracle-list">${records.map((record) => `<li>${escapeHtml(record.nickname)}</li>`).join("")}</ol>`
+        : '<p class="miracle-empty">まだ蝶の奇跡は刻まれていません。</p>'}
+    </section>
   `;
 }
 
@@ -669,7 +734,7 @@ function getPageTheme(page) {
     return "theme-prelude";
   }
 
-  if (page.type === "extra" || page.variant?.includes("epilogue")) {
+  if (["extra", "miracle"].includes(page.type) || page.variant?.includes("epilogue")) {
     return "theme-finale";
   }
 
@@ -867,6 +932,208 @@ function bindPuzzleForm(page) {
     input.classList.add("is-wrong");
     errorMessage.textContent = "まだ違うようです。蝶が示した手がかりをもう一度見直してみましょう。";
   });
+}
+
+function bindMiracleForm(page) {
+  if (!page || page.type !== "miracle") {
+    return;
+  }
+
+  startMiraclePolling();
+  refreshMiracleRecords({ silent: true });
+
+  const form = document.getElementById("miracle-form");
+  const input = document.getElementById("miracle-name");
+  const errorMessage = document.getElementById("miracle-error");
+  const submitButton = form.querySelector("button[type='submit']");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const nickname = input.value.trim();
+
+    if (!nickname) {
+      errorMessage.textContent = "ニックネームを入力してください。";
+      return;
+    }
+
+    try {
+      submitButton.disabled = true;
+      await addMiracleRecord(nickname);
+      input.value = "";
+      errorMessage.textContent = "";
+      await refreshMiracleRecords();
+    } catch {
+      errorMessage.textContent = "記録の保存に失敗しました。少し時間をおいてもう一度お試しください。";
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+}
+
+function getMiracleClient() {
+  const databaseURL = window.WEDDING_FIREBASE_CONFIG?.databaseURL?.replace(/\/$/, "") || "";
+
+  return {
+    enabled: Boolean(databaseURL),
+    databaseURL
+  };
+}
+
+function getMiracleEndpoint(client) {
+  return `${client.databaseURL}/butterflyMiracleRecords.json`;
+}
+
+function createMiracleId() {
+  if (window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function normalizeMiracleRecord(record, fallbackId = "") {
+  if (typeof record === "string") {
+    const nickname = record.trim().slice(0, 20);
+
+    return nickname
+      ? {
+          id: fallbackId || createMiracleId(),
+          nickname,
+          createdAt: new Date(0).toISOString()
+        }
+      : null;
+  }
+
+  if (!record || typeof record !== "object") {
+    return null;
+  }
+
+  const nickname = String(record.nickname || "").trim().slice(0, 20);
+
+  if (!nickname) {
+    return null;
+  }
+
+  return {
+    id: String(record.id || fallbackId || createMiracleId()),
+    nickname,
+    createdAt: String(record.createdAt || new Date(0).toISOString())
+  };
+}
+
+function normalizeMiracleRecords(data) {
+  if (!data) {
+    return [];
+  }
+
+  const records = Array.isArray(data)
+    ? data.map((record, index) => normalizeMiracleRecord(record, String(index)))
+    : Object.entries(data).map(([id, record]) => normalizeMiracleRecord(record, id));
+
+  return records
+    .filter(Boolean)
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .slice(0, MIRACLE_MAX_RECORDS);
+}
+
+async function fetchMiracleRecords() {
+  const client = getMiracleClient();
+
+  if (!client.enabled) {
+    return loadLocalMiracleRecords();
+  }
+
+  const response = await fetch(getMiracleEndpoint(client), {
+    cache: "no-store"
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not fetch miracle records.");
+  }
+
+  return normalizeMiracleRecords(await response.json());
+}
+
+async function addMiracleRecord(nickname) {
+  const record = {
+    id: createMiracleId(),
+    nickname: nickname.slice(0, 20),
+    createdAt: new Date().toISOString()
+  };
+  const client = getMiracleClient();
+
+  if (!client.enabled) {
+    const records = loadLocalMiracleRecords();
+    records.push(record);
+    saveLocalMiracleRecords(records);
+    miracleRecordsCache = records;
+    return;
+  }
+
+  const response = await fetch(getMiracleEndpoint(client), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(record)
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not save miracle record.");
+  }
+}
+
+async function refreshMiracleRecords({ silent = false } = {}) {
+  try {
+    miracleRecordsCache = await fetchMiracleRecords();
+    updateMiracleRecordsView();
+  } catch {
+    if (!silent) {
+      const errorMessage = document.getElementById("miracle-error");
+
+      if (errorMessage) {
+        errorMessage.textContent = "記録の読み込みに失敗しました。少し時間をおいてもう一度お試しください。";
+      }
+    }
+  }
+}
+
+function updateMiracleRecordsView() {
+  const recordsElement = document.querySelector(".miracle-records");
+
+  if (!recordsElement) {
+    return;
+  }
+
+  recordsElement.outerHTML = renderMiracleRecords();
+  schedulePageOverflowUpdate();
+}
+
+function startMiraclePolling() {
+  stopMiraclePolling();
+  miraclePollTimer = window.setInterval(() => {
+    refreshMiracleRecords({ silent: true });
+  }, MIRACLE_POLL_INTERVAL_MS);
+}
+
+function stopMiraclePolling() {
+  window.clearInterval(miraclePollTimer);
+  miraclePollTimer = null;
+}
+
+function loadLocalMiracleRecords() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(MIRACLE_STORAGE_KEY) || "[]");
+
+    return normalizeMiracleRecords(parsed);
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalMiracleRecords(records) {
+  localStorage.setItem(MIRACLE_STORAGE_KEY, JSON.stringify(records));
 }
 
 function normalizeVisibleAnswer(input, answerKey) {
@@ -1296,7 +1563,7 @@ function getAmbientAudioKey(page) {
     return page.ambientAudioKey;
   }
 
-  if (page.type === "ending" || page.type === "extra") {
+  if (["ending", "extra", "miracle"].includes(page.type)) {
     return "ending";
   }
 

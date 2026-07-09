@@ -14,7 +14,38 @@ https://nekochanninaritai.github.io/lost-invitation-wedding/
 - 1つのHTMLで画面を切り替えるSPA風構成
 - 謎解き、正解演出、エンディング演出
 - 画像・音源素材を使ったアンティークな絵本風デザイン
+- Extra Contents内の「蝶の奇跡」はFirebase Realtime Databaseで共有表示できます
 
 ## 推奨環境
 
 スマートフォンの縦画面での閲覧を想定しています。
+
+## 蝶の奇跡の共有設定
+
+`firebaseConfig.js` の `databaseURL` にFirebase Realtime DatabaseのURLを設定すると、登録されたニックネームが全員に共有されます。
+
+```js
+window.WEDDING_FIREBASE_CONFIG = {
+  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com"
+};
+```
+
+未設定の場合は、同じブラウザ内だけに保存される確認用モードで動作します。
+
+保存先パスは `/butterflyMiracleRecords` です。公開サイトで使う場合は、Firebase側でこのパスだけ読み書きできるルールを設定してください。
+
+ルール例:
+
+```json
+{
+  "rules": {
+    "butterflyMiracleRecords": {
+      ".read": true,
+      "$recordId": {
+        ".write": true,
+        ".validate": "newData.hasChildren(['id', 'nickname', 'createdAt']) && newData.child('nickname').isString() && newData.child('nickname').val().length > 0 && newData.child('nickname').val().length <= 20"
+      }
+    }
+  }
+}
+```
