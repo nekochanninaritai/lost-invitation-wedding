@@ -712,7 +712,7 @@ function renderInvitationPreview(isComplete = false) {
   const puzzlePages = pages.filter((item) => item.type === "puzzle");
   const pieces = puzzlePages.map((puzzle) => {
     const restored = isComplete || state.restoredPieces.includes(puzzle.restoredPiece);
-    const label = restored ? puzzle.restoredText : "失われた旋律";
+    const label = restored ? getRestoredMelodyLabel(puzzle) : puzzle.restoredText;
 
     return `<div class="invitation-piece ${restored ? "is-restored" : ""}">${escapeHtml(label)}</div>`;
   });
@@ -722,6 +722,16 @@ function renderInvitationPreview(isComplete = false) {
   }
 
   return `<div class="invitation-preview" aria-label="復元中のオルゴール">${pieces.join("")}</div>`;
+}
+
+function getRestoredMelodyLabel(puzzle) {
+  const savedAnswer = String(state.answers[String(puzzle.id)] || "").trim();
+
+  if (!savedAnswer) {
+    return puzzle.restoredText;
+  }
+
+  return `${puzzle.restoredText}：${savedAnswer}`;
 }
 
 function renderAnimatedTitle(title) {
