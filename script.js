@@ -83,8 +83,10 @@ const pages = [
     leftTitle: "第四章 Encore ― アンコール ―",
     story: "白い蝶が、最後の謎のそばへ降り立ちました。\n\n金色の蝶たちが、広間をゆっくり巡ります。\n\nさあ、最後の音を届けましょう。\n\n二人の新しい物語が、扉の向こうで待っています。",
     puzzleTitle: "謎解き④",
-    question: "テスト４",
-    answer: "４",
+    question: "画像の中に隠された最後の手がかりを読み解き、導かれる言葉を答えてください。",
+    questionImage: "assets/images/question4.png",
+    questionImageAlt: "第四章の謎解き画像",
+    answer: "シュクフク",
     explanation: "最後の答えが届いた瞬間。\n\nオルゴールのふたが、ゆっくりと開きました。\n\n四つの音が重なり、広間いっぱいに響きます。\n\n今日だけの祝福の音楽が完成しました。\n\n扉の向こうから、拍手のような光が差し込みます。",
     restoredPiece: 4,
     restoredText: "最後の旋律"
