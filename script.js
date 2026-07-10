@@ -1076,7 +1076,7 @@ async function addLotteryEntry() {
     return existingEntry;
   }
 
-  const entries = await fetchLotteryEntries();
+  const entries = await fetchLotteryEntries({ silent: true });
   const lotteryNumber = entries.length + 1;
   const record = {
     id: createMiracleId(),
@@ -1138,7 +1138,7 @@ function updateLotteryEntryView(entry) {
 }
 
 // Lottery Entry
-async function fetchLotteryEntries() {
+async function fetchLotteryEntries({ silent = false } = {}) {
   const client = getMiracleClient();
 
   if (!client.enabled) {
@@ -1150,6 +1150,10 @@ async function fetchLotteryEntries() {
   });
 
   if (!response.ok) {
+    if (silent) {
+      return [];
+    }
+
     throw new Error("Could not fetch lottery entries.");
   }
 
