@@ -14,7 +14,7 @@ https://nekochanninaritai.github.io/lost-invitation-wedding/
 - 1つのHTMLで画面を切り替えるSPA風構成
 - 謎解き、正解演出、エンディング演出
 - 画像・音源素材を使ったアンティークな絵本風デザイン
-- Extra Contents内の「蝶の奇跡」はFirebase Realtime Databaseで共有表示できます
+- エピローグ後の「蝶の奇跡」署名はFirebase Realtime Databaseで共有表示できます
 
 ## 推奨環境
 
@@ -22,7 +22,7 @@ https://nekochanninaritai.github.io/lost-invitation-wedding/
 
 ## 蝶の奇跡の共有設定
 
-`firebaseConfig.js` の `databaseURL` にFirebase Realtime DatabaseのURLを設定すると、登録されたニックネームが全員に共有されます。
+`firebaseConfig.js` の `databaseURL` にFirebase Realtime DatabaseのURLを設定すると、署名されたニックネームが全員に共有されます。
 
 ```js
 window.WEDDING_FIREBASE_CONFIG = {

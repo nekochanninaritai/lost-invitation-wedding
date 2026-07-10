@@ -117,22 +117,20 @@ const pages = [
     image: "assets/images/story-ending.png",
     imageAlt: "祝福の光に包まれたオルゴール",
     imageFirst: true,
-    buttonText: "披露宴へ戻る",
-    extraButton: true,
+    buttonText: "署名へ進む",
     ambientAudioKey: "ending",
     variant: "epilogue epilogue-final",
-    finalPage: true,
     preventSplit: true
+  },
+  {
+    type: "miracle",
+    title: "蝶の奇跡に署名する",
+    ambientAudioKey: "ending"
   },
   {
     type: "extra",
     title: "Extra Contents",
     subtitle: "祝福の館からの小さな贈り物",
-    ambientAudioKey: "ending"
-  },
-  {
-    type: "miracle",
-    title: "蝶の奇跡",
     ambientAudioKey: "ending"
   }
 ];
@@ -598,7 +596,6 @@ function renderExtraPage(page) {
         </div>
         <div class="page-actions">
           ${previousButton}
-          <button class="primary-button" type="button" data-action="next-page">蝶の奇跡へ</button>
           <button class="secondary-button" type="button" data-action="restart">タイトルへ戻る</button>
         </div>
       </article>
@@ -620,20 +617,22 @@ function renderMiraclePage(page) {
       <article class="page miracle-page room-page">
         ${renderPaperEffects()}
         ${renderRoomDecor(themeClass)}
-        <p class="eyebrow">Extra Contents</p>
+        <p class="eyebrow">Epilogue</p>
         <h2>${escapeHtml(page.title)}</h2>
         <div class="story-body miracle-intro">
-          ${formatStoryText("四つの旋律を届けたあなたのもとに、一匹の蝶が舞い降りました。\n\nその羽ばたきは、祝福の館に小さな奇跡として刻まれます。\n\nあなたの名前を、蝶の奇跡として残しますか？")}
+          ${formatStoryText("四つの旋律を届けてくれたあなたへ。\nその羽ばたきは、祝福の館に小さな奇跡として刻まれました。\n\nよろしければ、今日この館を訪れた証として、\nあなたの名前を残してください。")}
         </div>
         <form class="miracle-form" id="miracle-form">
           <label for="miracle-name">ニックネーム</label>
           <input id="miracle-name" type="text" maxlength="20" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ニックネームを入力">
-          <button class="primary-button" type="submit">奇跡を残す</button>
+          <button class="primary-button" type="submit">署名する</button>
+          <p id="miracle-success" class="miracle-success" aria-live="polite"></p>
           <p id="miracle-error" class="error-message" role="alert" aria-live="polite"></p>
         </form>
         ${renderMiracleRecords()}
         <div class="page-actions">
           ${previousButton}
+          <button class="primary-button" type="button" data-action="next-page">Extra Contentsへ</button>
           <button class="secondary-button" type="button" data-action="restart">タイトルへ戻る</button>
         </div>
       </article>
@@ -651,10 +650,10 @@ function renderMiracleRecords() {
 
   return `
     <section class="miracle-records" aria-labelledby="miracle-records-title">
-      <h3 id="miracle-records-title">蝶の奇跡の記録</h3>
+      <h3 id="miracle-records-title">蝶の奇跡の署名</h3>
       ${records.length
         ? `<ol class="miracle-list">${records.map((record) => `<li>${escapeHtml(record.nickname)}</li>`).join("")}</ol>`
-        : '<p class="miracle-empty">まだ蝶の奇跡は刻まれていません。</p>'}
+        : '<p class="miracle-empty">まだ署名はありません。</p>'}
     </section>
   `;
 }
@@ -959,6 +958,7 @@ function bindMiracleForm(page) {
   const form = document.getElementById("miracle-form");
   const input = document.getElementById("miracle-name");
   const errorMessage = document.getElementById("miracle-error");
+  const successMessage = document.getElementById("miracle-success");
   const submitButton = form.querySelector("button[type='submit']");
 
   form.addEventListener("submit", async (event) => {
@@ -968,6 +968,7 @@ function bindMiracleForm(page) {
 
     if (!nickname) {
       errorMessage.textContent = "ニックネームを入力してください。";
+      successMessage.textContent = "";
       return;
     }
 
@@ -976,8 +977,10 @@ function bindMiracleForm(page) {
       await addMiracleRecord(nickname);
       input.value = "";
       errorMessage.textContent = "";
+      successMessage.textContent = "ご署名ありがとうございます。\nあなたの羽ばたきも、祝福の旋律の一部になりました。";
       await refreshMiracleRecords();
     } catch {
+      successMessage.textContent = "";
       errorMessage.textContent = "記録の保存に失敗しました。少し時間をおいてもう一度お試しください。";
     } finally {
       submitButton.disabled = false;
