@@ -1517,6 +1517,7 @@ h3 {
   margin-left: auto;
 }
 
+.lottery-entry,
 .miracle-form,
 .miracle-records {
   position: relative;
@@ -1534,8 +1535,15 @@ h3 {
     0 14px 28px rgba(72, 49, 31, 0.1);
 }
 
+.lottery-entry {
+  background:
+    radial-gradient(circle at 86% 14%, rgba(235, 205, 122, 0.26), transparent 5.2rem),
+    linear-gradient(145deg, rgba(255, 250, 238, 0.82), rgba(246, 231, 201, 0.58));
+}
+
 .miracle-form::before,
-.miracle-records::before {
+.miracle-records::before,
+.lottery-entry::before {
   position: absolute;
   right: 18px;
   top: 16px;
@@ -1544,6 +1552,39 @@ h3 {
   font-family: "Noto Serif JP", "Yu Mincho", serif;
   font-size: 0.82rem;
   letter-spacing: 0.12em;
+}
+
+.lottery-entry::before {
+  content: "贈";
+}
+
+.lottery-entry h3 {
+  margin: 0 0 14px;
+}
+
+.lottery-entry__text {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.lottery-entry__button {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.lottery-entry__message {
+  min-height: 1.6em;
+  margin: 14px 0 0;
+  color: var(--accent-dark);
+  font-weight: 700;
+  line-height: 1.8;
+  text-align: center;
+  white-space: pre-line;
+}
+
+.lottery-entry__continue {
+  width: 100%;
+  margin-top: 12px;
 }
 
 .miracle-form label {
@@ -2708,6 +2749,7 @@ body[data-page-type="ending"] .ending-text {
     padding: 16px;
   }
 
+  .lottery-entry,
   .miracle-form,
   .miracle-records {
     margin-top: 22px;

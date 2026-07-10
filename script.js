@@ -137,6 +137,7 @@ const pages = [
 
 const STORAGE_KEY = "lostInvitationProgress";
 const MIRACLE_STORAGE_KEY = "butterflyMiracleRecords";
+const LOTTERY_STORAGE_KEY = "butterflyLotteryEntry";
 const MIRACLE_POLL_INTERVAL_MS = 5000;
 const MIRACLE_MAX_RECORDS = 200;
 
@@ -323,6 +324,7 @@ function renderPage() {
   bindCommonActions();
   bindPuzzleForm(page);
   bindMiracleForm(page);
+  bindLotteryEntry(page);
   updateAmbientAudio(page);
   bindMediaOverflowUpdates();
   schedulePageOverflowUpdate();
@@ -622,6 +624,7 @@ function renderMiraclePage(page) {
         <div class="story-body miracle-intro">
           ${formatStoryText("四つの旋律を届けてくれたあなたへ。\nその羽ばたきは、祝福の館に小さな奇跡として刻まれました。\n\nよろしければ、今日この館を訪れた証として、\nあなたの名前を残してください。")}
         </div>
+        ${renderLotteryEntrySection()}
         <form class="miracle-form" id="miracle-form">
           <label for="miracle-name">ニックネーム</label>
           <input id="miracle-name" type="text" maxlength="20" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ニックネームを入力">
@@ -643,6 +646,36 @@ function renderMiraclePage(page) {
       </article>
     </div>
   `;
+}
+
+function renderLotteryEntrySection() {
+  const entry = loadLotteryEntry();
+  const entered = Boolean(entry?.lotteryEntry);
+  const message = entered
+    ? renderLotteryCompleteMessage(entry)
+    : "";
+
+  return `
+    <section class="lottery-entry" id="lottery-entry" aria-labelledby="lottery-entry-title">
+      <h3 id="lottery-entry-title">プレゼント抽選</h3>
+      <div class="story-body lottery-entry__text">
+        ${formatStoryText("本日はご参加いただきありがとうございます。\n\nエンディングまで到達された方限定で、\n披露宴会場にてプレゼント抽選を行います。\n\nご希望の方は、\n「抽選へ参加する」を押してください。")}
+      </div>
+      <button class="primary-button lottery-entry__button" type="button" data-action="lottery-entry" ${entered ? "disabled" : ""}>
+        ${entered ? "抽選受付済み" : "🎁 抽選へ参加する"}
+      </button>
+      <p class="lottery-entry__message" id="lottery-message" aria-live="polite">${message}</p>
+      <button class="secondary-button lottery-entry__continue" type="button" data-action="continue-signature" ${entered ? "" : "hidden"}>続けて署名する</button>
+    </section>
+  `;
+}
+
+function renderLotteryCompleteMessage(entry) {
+  const lotteryNumber = entry?.lotteryNumber
+    ? `\nあなたの抽選番号は「No.${escapeHtml(String(entry.lotteryNumber))}」です。`
+    : "";
+
+  return `抽選受付が完了しました。${lotteryNumber}\n\n披露宴内で抽選を行います。\n\nどうぞお楽しみに。`;
 }
 
 function renderMiracleRecords() {
@@ -975,6 +1008,7 @@ function bindMiracleForm(page) {
     try {
       submitButton.disabled = true;
       await addMiracleRecord(nickname);
+      await syncLotteryEntryNickname(nickname);
       input.value = "";
       errorMessage.textContent = "";
       successMessage.textContent = "ご署名ありがとうございます。\nあなたの羽ばたきも、祝福の旋律の一部になりました。";
@@ -986,6 +1020,236 @@ function bindMiracleForm(page) {
       submitButton.disabled = false;
     }
   });
+}
+
+// Lottery Entry
+function bindLotteryEntry(page) {
+  if (!page || page.type !== "miracle") {
+    return;
+  }
+
+  const entryButton = document.querySelector("[data-action='lottery-entry']");
+  const continueButton = document.querySelector("[data-action='continue-signature']");
+  const message = document.getElementById("lottery-message");
+
+  if (entryButton) {
+    entryButton.addEventListener("click", async () => {
+      const currentEntry = loadLotteryEntry();
+
+      if (currentEntry?.lotteryEntry) {
+        updateLotteryEntryView(currentEntry);
+        return;
+      }
+
+      try {
+        entryButton.disabled = true;
+        entryButton.textContent = "受付中です";
+        const savedEntry = await addLotteryEntry();
+        updateLotteryEntryView(savedEntry);
+      } catch {
+        entryButton.disabled = false;
+        entryButton.textContent = "🎁 抽選へ参加する";
+
+        if (message) {
+          message.textContent = "抽選受付に失敗しました。少し時間をおいてもう一度お試しください。";
+        }
+      }
+    });
+  }
+
+  if (continueButton) {
+    continueButton.addEventListener("click", () => {
+      document.getElementById("miracle-name")?.focus();
+      document.getElementById("miracle-form")?.scrollIntoView({
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
+        block: "center"
+      });
+    });
+  }
+}
+
+// Lottery Entry
+async function addLotteryEntry() {
+  const existingEntry = loadLotteryEntry();
+
+  if (existingEntry?.lotteryEntry) {
+    return existingEntry;
+  }
+
+  const entries = await fetchLotteryEntries();
+  const lotteryNumber = entries.length + 1;
+  const record = {
+    id: createMiracleId(),
+    nickname: getPreferredLotteryNickname(),
+    completedAt: new Date().toISOString(),
+    lotteryEntry: true,
+    lotteryNumber
+  };
+  const client = getMiracleClient();
+
+  if (!client.enabled) {
+    saveLocalLotteryEntries([...entries, record]);
+    saveLotteryEntry(record);
+    return record;
+  }
+
+  const response = await fetch(getLotteryEndpoint(client), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(record)
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not save lottery entry.");
+  }
+
+  const result = await response.json();
+  const savedEntry = {
+    ...record,
+    firebaseKey: result.name || ""
+  };
+  saveLotteryEntry(savedEntry);
+
+  return savedEntry;
+}
+
+// Lottery Entry
+function updateLotteryEntryView(entry) {
+  const entryButton = document.querySelector("[data-action='lottery-entry']");
+  const continueButton = document.querySelector("[data-action='continue-signature']");
+  const message = document.getElementById("lottery-message");
+
+  if (entryButton) {
+    entryButton.disabled = true;
+    entryButton.textContent = "抽選受付済み";
+  }
+
+  if (continueButton) {
+    continueButton.hidden = false;
+  }
+
+  if (message) {
+    message.textContent = renderLotteryCompleteMessage(entry);
+  }
+
+  schedulePageOverflowUpdate();
+}
+
+// Lottery Entry
+async function fetchLotteryEntries() {
+  const client = getMiracleClient();
+
+  if (!client.enabled) {
+    return loadLocalLotteryEntries();
+  }
+
+  const response = await fetch(getLotteryEndpoint(client), {
+    cache: "no-store"
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not fetch lottery entries.");
+  }
+
+  return normalizeLotteryEntries(await response.json());
+}
+
+// Lottery Entry
+function getLotteryEndpoint(client) {
+  return `${client.databaseURL}/lotteryEntries.json`;
+}
+
+// Lottery Entry
+function normalizeLotteryEntries(data) {
+  if (!data) {
+    return [];
+  }
+
+  const records = Array.isArray(data)
+    ? data
+    : Object.entries(data).map(([firebaseKey, record]) => ({
+        ...record,
+        firebaseKey
+      }));
+
+  return records
+    .filter((record) => record && record.lotteryEntry)
+    .sort((a, b) => String(a.completedAt || "").localeCompare(String(b.completedAt || "")));
+}
+
+// Lottery Entry
+function getPreferredLotteryNickname() {
+  return "";
+}
+
+// Lottery Entry
+async function syncLotteryEntryNickname(nickname) {
+  const entry = loadLotteryEntry();
+  const normalizedNickname = nickname.trim().slice(0, 20);
+
+  if (!entry?.lotteryEntry || entry.nickname || !normalizedNickname) {
+    return;
+  }
+
+  const updatedEntry = {
+    ...entry,
+    nickname: normalizedNickname
+  };
+  const client = getMiracleClient();
+
+  saveLotteryEntry(updatedEntry);
+
+  if (!client.enabled || !entry.firebaseKey) {
+    return;
+  }
+
+  try {
+    await fetch(`${client.databaseURL}/lotteryEntries/${entry.firebaseKey}.json`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        nickname: normalizedNickname
+      })
+    });
+  } catch {
+    // Lottery Entry: 署名保存は抽選データの補完失敗に影響させない。
+  }
+}
+
+// Lottery Entry
+function loadLotteryEntry() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LOTTERY_STORAGE_KEY) || "null");
+
+    return parsed && typeof parsed === "object" ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+// Lottery Entry
+function saveLotteryEntry(entry) {
+  localStorage.setItem(LOTTERY_STORAGE_KEY, JSON.stringify(entry));
+}
+
+// Lottery Entry
+function loadLocalLotteryEntries() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(`${LOTTERY_STORAGE_KEY}List`) || "[]");
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+// Lottery Entry
+function saveLocalLotteryEntries(entries) {
+  localStorage.setItem(`${LOTTERY_STORAGE_KEY}List`, JSON.stringify(entries));
 }
 
 function getMiracleClient() {

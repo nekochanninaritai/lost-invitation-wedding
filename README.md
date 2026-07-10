@@ -45,6 +45,13 @@ window.WEDDING_FIREBASE_CONFIG = {
         ".write": true,
         ".validate": "newData.hasChildren(['id', 'nickname', 'createdAt']) && newData.child('nickname').isString() && newData.child('nickname').val().length > 0 && newData.child('nickname').val().length <= 20"
       }
+    },
+    "lotteryEntries": {
+      ".read": true,
+      "$entryId": {
+        ".write": true,
+        ".validate": "newData.hasChildren(['id', 'completedAt', 'lotteryEntry', 'lotteryNumber']) && newData.child('lotteryEntry').val() === true && newData.child('lotteryNumber').isNumber()"
+      }
     }
   }
 }
