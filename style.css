@@ -1562,6 +1562,22 @@ h3 {
   margin: 0 0 14px;
 }
 
+.lottery-entry__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  margin: 0 0 14px;
+  padding: 6px 14px;
+  color: var(--accent-dark);
+  border: 1px solid rgba(185, 154, 99, 0.42);
+  border-radius: 999px;
+  background: rgba(255, 250, 238, 0.58);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .lottery-entry__text {
   margin-right: auto;
   margin-left: auto;

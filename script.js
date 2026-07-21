@@ -658,6 +658,7 @@ function renderLotteryEntrySection() {
   return `
     <section class="lottery-entry" id="lottery-entry" aria-labelledby="lottery-entry-title">
       <h3 id="lottery-entry-title">プレゼント抽選</h3>
+      <p class="lottery-entry__count" id="lottery-count" aria-live="polite">現在の参加人数：確認中</p>
       <div class="story-body lottery-entry__text">
         ${formatStoryText("本日はご参加いただきありがとうございます。\n\nエンディングまで到達された方限定で、\n披露宴会場にてプレゼント抽選を行います。\n\nご希望の方は、\n「抽選へ参加する」を押してください。")}
       </div>
@@ -683,7 +684,7 @@ function renderMiracleRecords() {
 
   return `
     <section class="miracle-records" aria-labelledby="miracle-records-title">
-      <h3 id="miracle-records-title">蝶の奇跡の署名</h3>
+      <h3 id="miracle-records-title">祝福の署名</h3>
       ${records.length
         ? `<ol class="miracle-list">${records.map((record) => `<li>${escapeHtml(record.nickname)}</li>`).join("")}</ol>`
         : '<p class="miracle-empty">まだ署名はありません。</p>'}
@@ -1032,6 +1033,8 @@ function bindLotteryEntry(page) {
   const continueButton = document.querySelector("[data-action='continue-signature']");
   const message = document.getElementById("lottery-message");
 
+  refreshLotteryEntryCount();
+
   if (entryButton) {
     entryButton.addEventListener("click", async () => {
       const currentEntry = loadLotteryEntry();
@@ -1134,7 +1137,42 @@ function updateLotteryEntryView(entry) {
     message.textContent = renderLotteryCompleteMessage(entry);
   }
 
+  updateLotteryEntryCount(Math.max(Number(entry?.lotteryNumber) || 0, loadLocalLotteryEntries().length));
+  refreshLotteryEntryCount();
   schedulePageOverflowUpdate();
+}
+
+// Lottery Entry
+async function refreshLotteryEntryCount() {
+  const countElement = document.getElementById("lottery-count");
+
+  if (!countElement) {
+    return;
+  }
+
+  try {
+    const entries = await fetchLotteryEntries();
+    const localEntry = loadLotteryEntry();
+    const count = Math.max(entries.length, Number(localEntry?.lotteryNumber) || 0);
+    updateLotteryEntryCount(count);
+  } catch {
+    const localCount = loadLocalLotteryEntries().length;
+
+    countElement.textContent = localCount
+      ? `現在の参加人数：${localCount}名`
+      : "現在の参加人数：取得できませんでした";
+  }
+}
+
+// Lottery Entry
+function updateLotteryEntryCount(count) {
+  const countElement = document.getElementById("lottery-count");
+
+  if (!countElement) {
+    return;
+  }
+
+  countElement.textContent = `現在の参加人数：${Math.max(0, Number(count) || 0)}名`;
 }
 
 // Lottery Entry
