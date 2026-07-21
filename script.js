@@ -117,14 +117,14 @@ const pages = [
     image: "assets/images/story-ending.png",
     imageAlt: "祝福の光に包まれたオルゴール",
     imageFirst: true,
-    buttonText: "署名へ進む",
+    buttonText: "祝福の署名へ",
     ambientAudioKey: "ending",
     variant: "epilogue epilogue-final",
     preventSplit: true
   },
   {
     type: "miracle",
-    title: "蝶の奇跡に署名する",
+    title: "祝福の署名",
     ambientAudioKey: "ending"
   },
   {
